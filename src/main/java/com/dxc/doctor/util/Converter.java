@@ -22,7 +22,6 @@ public class Converter {
             givenMedicineEntity.setName(givenMedicineMapper.getName());
             givenMedicineEntity.setQuantity(givenMedicineMapper.getQuantity());
             givenMedicineEntity.setType(type);
-            givenMedicineEntity.setDeleted(false);
             givenMedicineEntityList.add(givenMedicineEntity);
         });
         return givenMedicineEntityList;

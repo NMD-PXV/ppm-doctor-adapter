@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MedicalTestRepository extends JpaRepository<MedicalTestResultEntity, Long> {
-
     MedicalTestResultEntity findByIdEquals(Long medicalTestResultId);
 }

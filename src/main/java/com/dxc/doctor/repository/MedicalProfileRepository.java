@@ -11,8 +11,6 @@ import java.util.List;
 
 @Repository
 public interface MedicalProfileRepository extends JpaRepository<MedicalTreatmentProfileEntity, Long> {
-
     List<MedicalTreatmentProfileEntity> findByPatientIdEquals(String patientId);
-
-
 }
+
