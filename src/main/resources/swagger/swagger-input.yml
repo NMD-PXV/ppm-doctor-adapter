@@ -1,0 +1,178 @@
+swagger: "2.0"
+info:
+  description: "Doctor Functions"
+  version: "1.0.0"
+  title: "Doctor Functions"
+tags:
+- name: "doctor"
+  description: "Everything about doctor functions"
+schemes:
+- "https"
+- "http"
+paths:
+  /v1/patients/{id}/profiles:
+    post:
+      tags:
+      - "doctor"
+      summary: "upsert profiles to a patient"
+      description: "upsert profiles to a patient by patient_id"
+      operationId: "upsertProfiles"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        description: "Id of a patient"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "profiles"
+        description: "List of profiles"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/MedicalTreatmentProfile"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid input"
+        500:
+          description: "Internal server error"
+
+  v1/patients:
+    get:
+      tags:
+      - "doctor"
+      summary: "get patient profiles"
+      description: "get patient profiles by name, disease, medicine. If no query then return all patient profiles"
+      operationId: "searchPatients"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        name: "name"
+        type: "string"
+        description: "name of patient"
+        required: false
+      - in: "query"
+        name: "disease"
+        type: "string"
+        description: "name of disease"
+        required: false
+      - in: "query"
+        name: "medicine"
+        type: "string"
+        description: "name of medicine"
+        required: false
+      responses:
+        200:
+          description: "profiles found"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/MedicalTreatmentProfile"
+        400:
+          description: "Invalid input"
+        500:
+          description: "Internal server error"
+
+  v1/patients/{id}/profiles/tests:
+    get:
+      tags:
+      - "doctor"
+      summary: "get info about patient be allergic to a specific medicine"
+      description: "using id on path and query name to get info about patient be allergic to a specific medicine"
+      operationId: "searchTest"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        type: "string"
+        description: "id of the patient"
+        required: true
+      - in: "query"
+        name: "name"
+        type: "string"
+        description: "name of medicine"
+        required: true
+      responses:
+        200:
+          description: "Ok"
+          schema:
+            type: "array"
+            items:
+              type: "string"
+        400:
+          description: "Invalid input"
+        500:
+          description: "Internal server error"
+definitions:
+  MedicalTreatmentProfile:
+    type: "object"
+    properties:
+      profileId:
+        type: "string"
+      createdDate:
+        type: "string"
+        format: "date"
+        example: "2018-11-30"
+      modifiedDate:
+        type: "string"
+        format: "date"
+        example: "2018-11-30"
+      doctor:
+        type: "string"
+        example: "Dr Strange"
+      doctorUpdated:
+        type: "string"
+      diseasesHistory:
+        type: "array"
+        items:
+          type: "string"
+          example: "Flu"
+      prescription:
+        $ref: "#/definitions/Prescription"
+      medicalTestResult:
+        $ref: "#/definitions/MedicalTestResult"
+  MedicalTestResult:
+    type: "object"
+    properties:
+      bloodType:
+        type: "string"
+        example: "O"
+      xRay:
+        type: "string"
+        example: "normal"
+      ultraSound:
+        type: "string"
+        example: "normal"
+      allergicMedicines:
+        type: "array"
+        items:
+          type: "string"
+          example: "panadol extra"
+  Prescription:
+    type: "object"
+    properties:
+      recentlyUsed:
+        type: "array"
+        items:
+          $ref: "#/definitions/GivenMedicine"
+      beingUsed:
+        type: "array"
+        items:
+          $ref: "#/definitions/GivenMedicine"
+  GivenMedicine:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        example: "Paracetamol 500"
+      quantity:
+        type: "integer"
+        example: "10"
