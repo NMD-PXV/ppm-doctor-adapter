@@ -79,7 +79,7 @@ public class DoctorService {
                  *  Update MedicalTreatment Fields
                  */
                 medicalProfileExistedList.get(i).setDoctorUpdated(profiles.get(i).getDoctorUpdated());
-                medicalProfileExistedList.get(i).setDiseasesHistory(profiles.get(i).getDiseasesHistory().toString());
+                //medicalProfileExistedList.get(i).setDiseasesHistory(profiles.get(i).getDiseasesHistory().toString());
                 medicalProfileExistedList.get(i).setModifiedDate(new Date());
 
                 /**
@@ -139,7 +139,7 @@ public class DoctorService {
             MedicalTreatmentProfileEntity medicalTreatmentProfileEntity = new MedicalTreatmentProfileEntity();
             medicalTreatmentProfileEntity.setDoctor(profileMapper.getDoctor());
             medicalTreatmentProfileEntity.setDoctorUpdated(profileMapper.getDoctor());
-            medicalTreatmentProfileEntity.setDiseasesHistory(profileMapper.getDiseasesHistory().toString());
+           // medicalTreatmentProfileEntity.setDiseasesHistory(profileMapper.getDiseasesHistory().toString());
             medicalTreatmentProfileEntity.setCreateDate(new Date());
             medicalTreatmentProfileEntity.setModifiedDate(new Date());
             medicalTreatmentProfileEntity.setProfileId(profileId);
@@ -180,5 +180,10 @@ public class DoctorService {
             result.append("\n");
         }
         return result.toString();
+    }
+
+    public List<MedicalTreatmentProfile> searchTreatmentProfiles(String name, String disease, String medicine) {
+
+        return null;
     }
 }

@@ -3,7 +3,7 @@ package com.dxc.doctor.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "GivenMedicineEntity")
+@Table(name = "GivenMedicine")
 public class GivenMedicineEntity {
 
     @Id
