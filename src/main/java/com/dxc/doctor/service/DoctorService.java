@@ -1,6 +1,5 @@
 package com.dxc.doctor.service;
 
-import com.dxc.doctor.api.model.GivenMedicine;
 import com.dxc.doctor.api.model.MedicalTreatmentProfile;
 import com.dxc.doctor.common.Type;
 import com.dxc.doctor.entity.GivenMedicineEntity;
@@ -61,9 +60,13 @@ public class DoctorService {
         if (medicalProfileExistedList.size() == 0) {
             result.append("New id profile(s):\n");
             addProfiles(id, profiles, result); }
-            else { updateProfile(id, profiles, medicalProfileExistedList, result); }
+            else {
+               updateProfile(id, profiles, medicalProfileExistedList, result);
+            }
         return result.toString();
     }
+
+
 
     @Transactional
     public String updateProfile(String id, List<MedicalTreatmentProfile> profiles,
@@ -81,6 +84,7 @@ public class DoctorService {
                  *  Update MedicalTreatment Fields
                  */
                 medicalProfileExistedList.get(i).setDoctorUpdated(profiles.get(i).getDoctorUpdated());
+
                 //medicalProfileExistedList.get(i).setDiseasesHistory(profiles.get(i).getDiseasesHistory().toString());
                 medicalProfileExistedList.get(i).setModifiedDate(new Date());
 
@@ -89,13 +93,13 @@ public class DoctorService {
                  */
                 List<GivenMedicineEntity> givenMedicinesBeingUsed = givenMedicineRepository.getMedicinesByType(
                         medicalProfileExistedList.get(i).getPrescription().getId(), Type.BEING_USED.toString());
-                List<GivenMedicineEntity> beingUsedMapperList = Converter.convertUpdateGivenMedicineToEntity(
+                List<GivenMedicineEntity> beingUsedMapperList = Converter.convertUpdateMedicine(
                         profiles.get(i).getPrescription().getBeingUsed(), Type.BEING_USED.toString());
                 List<GivenMedicineEntity> beingUsedMedicines = updateGivenMedicine(givenMedicinesBeingUsed, beingUsedMapperList);
 
                 List<GivenMedicineEntity> givenMedicinesRecentlyUsed = givenMedicineRepository.getMedicinesByType(
                         medicalProfileExistedList.get(i).getPrescription().getId(), Type.RECENTLY_USED.toString());
-                List<GivenMedicineEntity> recentlyUsedMapperList = Converter.convertUpdateGivenMedicineToEntity(
+                List<GivenMedicineEntity> recentlyUsedMapperList = Converter.convertUpdateMedicine(
                         profiles.get(i).getPrescription().getRecentlyUsed(), Type.RECENTLY_USED.toString());
                 List<GivenMedicineEntity> recentlyUsedMedicines = updateGivenMedicine(givenMedicinesRecentlyUsed, recentlyUsedMapperList);
 
@@ -138,6 +142,7 @@ public class DoctorService {
 
     @Transactional
     public String addProfiles(String id, List<MedicalTreatmentProfile> profiles, StringBuffer result) {
+
         for (MedicalTreatmentProfile profileMapper : profiles) {
 
             /**
@@ -147,7 +152,7 @@ public class DoctorService {
             MedicalTreatmentProfileEntity medicalTreatmentProfileEntity = new MedicalTreatmentProfileEntity();
             medicalTreatmentProfileEntity.setDoctor(profileMapper.getDoctor());
             medicalTreatmentProfileEntity.setDoctorUpdated(profileMapper.getDoctor());
-           // medicalTreatmentProfileEntity.setDiseasesHistory(profileMapper.getDiseasesHistory().toString());
+//            medicalTreatmentProfileEntity.setDiseasesHistory(profileMapper.getDiseasesHistory().toString());
             medicalTreatmentProfileEntity.setCreateDate(new Date());
             medicalTreatmentProfileEntity.setModifiedDate(new Date());
             medicalTreatmentProfileEntity.setProfileId(profileId);

@@ -4,11 +4,16 @@ package com.dxc.doctor.util;
 import com.dxc.doctor.api.model.GivenMedicine;
 import com.dxc.doctor.api.model.MedicalTestResult;
 import com.dxc.doctor.api.model.MedicalTreatmentProfile;
+import com.dxc.doctor.common.Type;
 import com.dxc.doctor.entity.GivenMedicineEntity;
 import com.dxc.doctor.entity.MedicalTestResultEntity;
+import com.dxc.doctor.entity.MedicalTreatmentProfileEntity;
+import com.dxc.doctor.entity.PrescriptionEntity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class Converter {
 
@@ -28,7 +33,7 @@ public class Converter {
         return givenMedicineEntityList;
     }
 
-    public static List<GivenMedicineEntity> convertUpdateGivenMedicineToEntity(List<GivenMedicine> givenMedicines,
+    public static List<GivenMedicineEntity> convertUpdateMedicine(List<GivenMedicine> givenMedicines,
                                                                          String type) {
         List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
         givenMedicines.stream().forEach(givenMedicineMapper -> {
