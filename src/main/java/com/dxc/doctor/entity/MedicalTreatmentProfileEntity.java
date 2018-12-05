@@ -2,9 +2,10 @@ package com.dxc.doctor.entity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table(name = "MedicalTreatmentProfileEntity")
+@Table(name = "MedicalTreatmentProfile")
 public class MedicalTreatmentProfileEntity {
 
     @Id
@@ -30,9 +31,6 @@ public class MedicalTreatmentProfileEntity {
     @Column(name = "MODIFIED_DATE")
     private Date modifiedDate;
 
-    @Column(name = "DISEASES_HISTORY")
-    private String diseasesHistory;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "MEDICAL_TEST_RESULT_ID")
     private MedicalTestResultEntity medicalTestResult;
@@ -40,6 +38,18 @@ public class MedicalTreatmentProfileEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "PRESCRIPTION_ID")
     private PrescriptionEntity prescription;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "MEDICAL_TREATMENT_PROFILE_ID")
+    private List<DiseasesHistory> diseasesHistory;
+
+    public List<DiseasesHistory> getDiseasesHistory() {
+        return diseasesHistory;
+    }
+
+    public void setDiseasesHistory(List<DiseasesHistory> diseasesHistory) {
+        this.diseasesHistory = diseasesHistory;
+    }
 
     public Long getId() {
         return id;
@@ -87,14 +97,6 @@ public class MedicalTreatmentProfileEntity {
 
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
-    }
-
-    public String getDiseasesHistory() {
-        return diseasesHistory;
-    }
-
-    public void setDiseasesHistory(String diseasesHistory) {
-        this.diseasesHistory = diseasesHistory;
     }
 
     public MedicalTestResultEntity getMedicalTestResult() {
