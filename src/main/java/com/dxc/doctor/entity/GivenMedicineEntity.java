@@ -11,6 +11,9 @@ public class GivenMedicineEntity {
     @Column(name = "ID")
     private Long id;
 
+    @Column(name = "DELETED")
+    private boolean deleted;
+
     @Column(name = "NAME")
     private String name;
 
@@ -50,5 +53,13 @@ public class GivenMedicineEntity {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

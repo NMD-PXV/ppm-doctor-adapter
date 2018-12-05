@@ -1,5 +1,6 @@
 package com.dxc.doctor.service;
 
+import com.dxc.doctor.api.model.GivenMedicine;
 import com.dxc.doctor.api.model.MedicalTreatmentProfile;
 import com.dxc.doctor.common.Type;
 import com.dxc.doctor.entity.GivenMedicineEntity;
@@ -14,6 +15,7 @@ import com.dxc.doctor.util.Converter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +41,7 @@ public class DoctorService {
         this.medicalTestRepository = medicalTestRepository;
     }
 
+    @Transactional
     public String upsertProfiles(String id, List<MedicalTreatmentProfile> profiles) {
         StringBuffer result = new StringBuffer();
 
@@ -57,13 +60,12 @@ public class DoctorService {
                 medicalProfileRepository.findByPatientIdEquals(id);
         if (medicalProfileExistedList.size() == 0) {
             result.append("New id profile(s):\n");
-            addProfiles(id, profiles, result);
-        } else {
-            updateProfile(id, profiles, medicalProfileExistedList, result);
-        }
+            addProfiles(id, profiles, result); }
+            else { updateProfile(id, profiles, medicalProfileExistedList, result); }
         return result.toString();
     }
 
+    @Transactional
     public String updateProfile(String id, List<MedicalTreatmentProfile> profiles,
                                 List<MedicalTreatmentProfileEntity> medicalProfileExistedList,
                                 StringBuffer result) {
@@ -83,25 +85,30 @@ public class DoctorService {
                 medicalProfileExistedList.get(i).setModifiedDate(new Date());
 
                 /**
+                 *  Update GivenMedicine
+                 */
+                List<GivenMedicineEntity> givenMedicinesBeingUsed = givenMedicineRepository.getMedicinesByType(
+                        medicalProfileExistedList.get(i).getPrescription().getId(), Type.BEING_USED.toString());
+                List<GivenMedicineEntity> beingUsedMapperList = Converter.convertUpdateGivenMedicineToEntity(
+                        profiles.get(i).getPrescription().getBeingUsed(), Type.BEING_USED.toString());
+                List<GivenMedicineEntity> beingUsedMedicines = updateGivenMedicine(givenMedicinesBeingUsed, beingUsedMapperList);
+
+                List<GivenMedicineEntity> givenMedicinesRecentlyUsed = givenMedicineRepository.getMedicinesByType(
+                        medicalProfileExistedList.get(i).getPrescription().getId(), Type.RECENTLY_USED.toString());
+                List<GivenMedicineEntity> recentlyUsedMapperList = Converter.convertUpdateGivenMedicineToEntity(
+                        profiles.get(i).getPrescription().getRecentlyUsed(), Type.RECENTLY_USED.toString());
+                List<GivenMedicineEntity> recentlyUsedMedicines = updateGivenMedicine(givenMedicinesRecentlyUsed, recentlyUsedMapperList);
+
+                List<GivenMedicineEntity> medicinesUpdated = new ArrayList<>();
+                medicinesUpdated.addAll(beingUsedMedicines);
+                medicinesUpdated.addAll(recentlyUsedMedicines);
+
+                /**
                  *  Update Prescription
                  */
                 PrescriptionEntity prescriptionEntity = prescriptionRepository
                         .findByIdEquals(medicalProfileExistedList.get(i).getPrescription().getId());
-                givenMedicineRepository.deleteMedicinesByPrescriptionId(prescriptionEntity.getId());
-
-                /**
-                 *  Update GivenMedicine
-                 */
-                List<GivenMedicineEntity> beingUsedMapperList = Converter.convertGivenMedicineToEntity(
-                        profiles.get(i).getPrescription().getBeingUsed(), Type.BEING_USED.toString());
-                List<GivenMedicineEntity> recentlyUsedMapperList = Converter.convertGivenMedicineToEntity(
-                        profiles.get(i).getPrescription().getRecentlyUsed(), Type.RECENTLY_USED.toString());
-
-                List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
-                givenMedicineEntityList.addAll(beingUsedMapperList);
-                givenMedicineEntityList.addAll(recentlyUsedMapperList);
-
-                prescriptionEntity.setGivenMedicines(givenMedicineEntityList);
+                prescriptionEntity.setGivenMedicines(medicinesUpdated);
                 medicalProfileExistedList.get(i).setPrescription(prescriptionEntity);
 
                 /**
@@ -129,6 +136,7 @@ public class DoctorService {
         return addProfiles(id, medicalTreatmentProfileList, result);
     }
 
+    @Transactional
     public String addProfiles(String id, List<MedicalTreatmentProfile> profiles, StringBuffer result) {
         for (MedicalTreatmentProfile profileMapper : profiles) {
 
@@ -180,5 +188,56 @@ public class DoctorService {
             result.append("\n");
         }
         return result.toString();
+    }
+
+    @Transactional
+    private List<GivenMedicineEntity> updateGivenMedicine(List<GivenMedicineEntity> medicinesExsited
+            , List<GivenMedicineEntity> medicinesMapper) {
+        List<GivenMedicineEntity> newMedicines = new ArrayList<>();
+        if(medicinesExsited.size() <= medicinesMapper.size()) {
+            for (GivenMedicineEntity medicineMapper: medicinesMapper) {
+                for(GivenMedicineEntity medicineExisted: medicinesExsited) {
+                    if(medicineExisted.getId().equals(medicineMapper.getId())) {
+                        GivenMedicineEntity g = givenMedicineRepository.getMedicineById(medicineExisted.getId(),
+                                medicineExisted.getType());
+                        g.setId(medicineMapper.getId());
+                        g.setName(medicineMapper.getName());
+                        g.setQuantity(medicineMapper.getQuantity());
+                        g.setType(medicineMapper.getType());
+                        givenMedicineRepository.save(g);
+                    } else {
+                        GivenMedicineEntity newMedicine = new GivenMedicineEntity();
+                        newMedicine.setName(medicineMapper.getName());
+                        newMedicine.setQuantity(medicineMapper.getQuantity());
+                        newMedicine.setType(medicineMapper.getType());
+                        newMedicine.setType(medicineMapper.getType());
+                        newMedicine.setDeleted(false);
+                        newMedicines.add(newMedicine);
+                    }
+                }
+            }
+            medicinesExsited.addAll(newMedicines);
+        } else {
+            for (GivenMedicineEntity medicineExisted: medicinesExsited) {
+                for (GivenMedicineEntity medicineMapper: medicinesMapper) {
+                    GivenMedicineEntity g = givenMedicineRepository.getMedicineById(medicineMapper.getId(),
+                            medicineExisted.getType());
+                    if(medicineExisted.getId().equals(medicineMapper.getId())) {
+                        g.setId(medicineMapper.getId());
+                        g.setName(medicineMapper.getName());
+                        g.setQuantity(medicineMapper.getQuantity());
+                        g.setType(medicineMapper.getType());
+                        givenMedicineRepository.save(g);
+                    } else {
+                        medicineExisted.setDeleted(true);
+                        givenMedicineRepository.save(g);
+                    }
+                }
+            }
+        }
+        if(newMedicines!=null) {
+            medicinesExsited.addAll(newMedicines);
+        }
+        return medicinesExsited;
     }
 }

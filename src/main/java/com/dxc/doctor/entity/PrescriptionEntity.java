@@ -42,4 +42,6 @@ public class PrescriptionEntity {
     public void setGivenMedicines(List<GivenMedicineEntity> givenMedicines) {
         this.givenMedicines = givenMedicines;
     }
+
+
 }

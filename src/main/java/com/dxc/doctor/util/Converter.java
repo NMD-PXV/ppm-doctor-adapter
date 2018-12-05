@@ -22,6 +22,22 @@ public class Converter {
             givenMedicineEntity.setName(givenMedicineMapper.getName());
             givenMedicineEntity.setQuantity(givenMedicineMapper.getQuantity());
             givenMedicineEntity.setType(type);
+            givenMedicineEntity.setDeleted(false);
+            givenMedicineEntityList.add(givenMedicineEntity);
+        });
+        return givenMedicineEntityList;
+    }
+
+    public static List<GivenMedicineEntity> convertUpdateGivenMedicineToEntity(List<GivenMedicine> givenMedicines,
+                                                                         String type) {
+        List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
+        givenMedicines.stream().forEach(givenMedicineMapper -> {
+            GivenMedicineEntity givenMedicineEntity = new GivenMedicineEntity();
+            givenMedicineEntity.setId(givenMedicineMapper.getId().longValue());
+            givenMedicineEntity.setName(givenMedicineMapper.getName());
+            givenMedicineEntity.setQuantity(givenMedicineMapper.getQuantity());
+            givenMedicineEntity.setType(type);
+            givenMedicineEntity.setDeleted(false);
             givenMedicineEntityList.add(givenMedicineEntity);
         });
         return givenMedicineEntityList;

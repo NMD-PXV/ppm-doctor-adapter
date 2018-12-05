@@ -15,8 +15,20 @@ import java.util.List;
 @Repository
 public interface GivenMedicineRepository extends JpaRepository<GivenMedicineEntity, Long> {
 
-    @Transactional
-    @Modifying
-    @Query("DELETE FROM GivenMedicineEntity medicine WHERE prescription_id = :prescriptionId")
-    void deleteMedicinesByPrescriptionId(@Param("prescriptionId") Long prescriptionId);
+    @Query("SELECT medicines FROM GivenMedicineEntity medicines WHERE prescription_id = :prescriptionId AND " +
+            "deleted = false")
+    List<GivenMedicineEntity> getMedicinesByPreId(@Param("prescriptionId") Long prescriptionId);
+
+    @Query("SELECT medicines FROM GivenMedicineEntity medicines WHERE prescription_id = :prescriptionId AND " +
+            "deleted = false AND type = :type")
+    List<GivenMedicineEntity> getMedicinesByType(@Param("prescriptionId") Long prescriptionId,
+                                                     @Param("type") String type);
+
+    @Query("SELECT medicines FROM GivenMedicineEntity medicines WHERE id = :id AND " +
+            "deleted = false AND type = :type")
+    GivenMedicineEntity getMedicineById(@Param("id") Long id,
+                                                 @Param("type") String type);
+
+
+//    List<GivenMedicineEntity> findByPrescriptionIdAndDeleted(Long prescriptionId, boolean deleted);
 }
