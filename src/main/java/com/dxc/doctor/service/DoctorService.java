@@ -70,15 +70,13 @@ public class DoctorService {
          */
         for (int i = 0; i < profiles.size(); i++)
             if (profiles.get(i).getProfileId().equals(medicalProfileExistedList.get(i).getProfileId())) {
-                /**
-                 *  Update MedicalTreatment Fields
-                 */
+
+                //  Update MedicalTreatment Fields
                 medicalProfileExistedList.get(i).setDoctorUpdated(profiles.get(i).getDoctorUpdated());
                 medicalProfileExistedList.get(i).setModifiedDate(new Date());
 
-                /**
-                 * update diseases history
-                 */
+
+                // update diseases history
                 List<DiseasesHistory> diseasesHistoryList = new ArrayList<>();
                 List<String> diseasesMapper = profiles.get(i).getDiseasesHistory();
                 diseasesHistoryList = diseasesMapper.stream().map(d -> {
@@ -89,9 +87,7 @@ public class DoctorService {
                 medicalProfileExistedList.get(i).setDiseasesHistory(diseasesHistoryList);
 
 
-                /**
-                 *  Update GivenMedicine
-                 */
+                // Update GivenMedicine
                 List<GivenMedicineEntity> givenMedicinesBeingUsed = givenMedicineRepository.getMedicinesByType(
                         medicalProfileExistedList.get(i).getPrescription().getId(), Type.BEING_USED.toString());
                 List<GivenMedicineEntity> beingUsedMapperList = Converter.convertMedicinesForUpdate(
@@ -107,23 +103,20 @@ public class DoctorService {
                 List<GivenMedicineEntity> medicinesUpdated = new ArrayList<>();
                 medicinesUpdated.addAll(beingUsedMedicines);
                 medicinesUpdated.addAll(recentlyUsedMedicines);
-                /**
-                 *  Update Prescription
-                 */
+
+                //  Update Prescription
                 PrescriptionEntity prescriptionEntity = prescriptionRepository
                         .findByIdEquals(medicalProfileExistedList.get(i).getPrescription().getId());
                 prescriptionEntity.setGivenMedicines(medicinesUpdated);
                 medicalProfileExistedList.get(i).setPrescription(prescriptionEntity);
-                /**
-                 *  Update MedicalTestResult
-                 */
+
+                //  Update MedicalTestResult
                 MedicalTestResultEntity medicalTestResultEntity = medicalTestRepository
                         .findByIdEquals(medicalProfileExistedList.get(i).getMedicalTestResult().getId());
                 medicalProfileExistedList.get(i).setMedicalTestResult(Converter
                         .convertMedicalTestResultForUpdate(medicalTestResultEntity, profiles.get(i)));
-                /**
-                 * save update to database
-                 */
+
+                // save update to database
                 medicalProfileRepository.save(medicalProfileExistedList.get(i));
                 result.append("Updated: ");
                 result.append("\n");
@@ -141,9 +134,8 @@ public class DoctorService {
     @Transactional
     public String addProfiles(String id, List<MedicalTreatmentProfile> profiles, StringBuffer result) {
         for (MedicalTreatmentProfile profileMapper : profiles) {
-            /**
-             * set profile info
-             */
+
+            // set profile info
             String profileId = UUID.randomUUID().toString();
             MedicalTreatmentProfileEntity medicalTreatmentProfileEntity = new MedicalTreatmentProfileEntity();
             medicalTreatmentProfileEntity.setDoctor(profileMapper.getDoctor());
@@ -152,23 +144,20 @@ public class DoctorService {
             medicalTreatmentProfileEntity.setModifiedDate(new Date());
             medicalTreatmentProfileEntity.setProfileId(profileId);
             medicalTreatmentProfileEntity.setPatientId(id);
-            /**
-             * set diseases history
-             */
+
+            // set diseases history
             List<DiseasesHistory> diseasesEntityList = profileMapper.getDiseasesHistory().stream().map(d -> {
                 DiseasesHistory diseasesHistory = new DiseasesHistory();
                 diseasesHistory.setName(d);
                 return diseasesHistory;
             }).collect(Collectors.toList());
             medicalTreatmentProfileEntity.setDiseasesHistory(diseasesEntityList);
-            /**
-             * set medical Test result
-             */
+
+            // set medical Test result
             medicalTreatmentProfileEntity.setMedicalTestResult(
                     Converter.convertMedicalTestResultToEntity(profileMapper));
-            /**
-             * set Given Medicine
-             */
+
+            // set Given Medicine
             List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
             givenMedicineEntityList.addAll(Converter.convertMedicinesToEntity(profileMapper
                     .getPrescription()
@@ -176,15 +165,14 @@ public class DoctorService {
             givenMedicineEntityList.addAll(Converter.convertMedicinesToEntity(profileMapper
                     .getPrescription()
                     .getBeingUsed(), Type.RECENTLY_USED.toString()));
-            /**
-             * set Given Prescription
-             */
+
+
+            // set Given Prescription
             PrescriptionEntity prescriptionEntity = new PrescriptionEntity();
             prescriptionEntity.setGivenMedicines(givenMedicineEntityList);
             medicalTreatmentProfileEntity.setPrescription(prescriptionEntity);
-            /**
-             * save new profile to database
-             */
+
+            // save new profile to database
             medicalProfileRepository.saveAndFlush(medicalTreatmentProfileEntity);
             result.append("Created: ");
             result.append("\n");
@@ -264,30 +252,24 @@ public class DoctorService {
     public List<MedicalTreatmentProfile> searchProfilesByPatientId(String id) {
         List<MedicalTreatmentProfileEntity> profilesEntity = medicalProfileRepository.findByPatientIdEquals(id);
         List<MedicalTreatmentProfile> profiles = profilesEntity.stream().map(e -> {
-            MedicalTreatmentProfile profile = new MedicalTreatmentProfile();
-            BigDecimal bigDecimalId = new BigDecimal(e.getId());
-            profile = ProfileUtil.entity2Profile(e);
+            MedicalTreatmentProfile profile = ProfileUtil.entity2Profile(e);
             return profile;
         }).collect(Collectors.toList());
         return profiles;
     }
 
-    public List<String> searchTest(String id, String name) {
+    public String searchTest(String id, String name) {
         //TODO check ID
         List<MedicalTreatmentProfileEntity> profiles = medicalProfileRepository.findByPatientIdEquals(id);
-        if(profiles.size() != 0) {
-            profiles.stream().forEach(p -> {
-                Long idPre = p.getMedicalTestResult().getId();
 
-
-
-            });
-        } else {
-            //TODO throw exception
+        for (MedicalTreatmentProfileEntity p : profiles) {
+            Long idMedicalTest = p.getMedicalTestResult().getId();
+            String allergicMedicines = medicalTestRepository.getProfileIdsByDisease(idMedicalTest);
+            if (Arrays.stream(allergicMedicines.split(",")).collect(Collectors.toList()).contains(name)) {
+                return "found allergicMedicine";
+            }
         }
-
-        return null;
+        return "Not found allergicMedicine";
     }
-
 }
 

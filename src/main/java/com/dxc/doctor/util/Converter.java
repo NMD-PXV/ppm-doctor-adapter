@@ -55,7 +55,7 @@ public class Converter {
         medicalTestResultEntity.setBloodType(profile.getMedicalTestResult().getBloodType());
         medicalTestResultEntity.setxRay(profile.getMedicalTestResult().getXRay());
         medicalTestResultEntity.setUltraSound(profile.getMedicalTestResult().getUltraSound());
-        medicalTestResultEntity.setAllergicMedicines(profile.getMedicalTestResult().getAllergicMedicines().toString());
+        medicalTestResultEntity.setAllergicMedicines(profile.getMedicalTestResult().getAllergicMedicines().stream().collect(Collectors.joining(",")));
         return medicalTestResultEntity;
     }
 

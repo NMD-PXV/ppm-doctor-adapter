@@ -1,11 +1,11 @@
 swagger: "2.0"
 info:
-  description: "Doctor Functions"
+  description: "PPM Doctor Adapter"
   version: "1.0.0"
-  title: "Doctor Functions"
+  title: "PPM Doctor Adapter"
 tags:
 - name: "doctor"
-  description: "Everything about doctor functions"
+  description: "Everything about doctor adapter"
 schemes:
 - "https"
 - "http"
@@ -112,7 +112,7 @@ paths:
       description: "using id on path and query name to get info about patient be allergic to a specific medicine"
       operationId: "searchTest"
       produces:
-      - "application/json"
+      - "text/plain"
       parameters:
       - in: "path"
         name: "id"
@@ -128,9 +128,7 @@ paths:
         200:
           description: "Ok"
           schema:
-            type: "array"
-            items:
-              type: "string"
+            type: "string"
         400:
           description: "Invalid input"
         500:

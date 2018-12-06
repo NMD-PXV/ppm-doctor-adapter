@@ -26,8 +26,8 @@ public class V1ApiDelegateImp implements V1ApiDelegate {
     }
 
     @Override
-    public ResponseEntity<List<String>> searchTest(String id, String name) {
-        return null;
+    public ResponseEntity<String> searchTest(String id, String name) {
+        return ResponseEntity.ok(doctorService.searchTest(id, name));
     }
 
     @Override
