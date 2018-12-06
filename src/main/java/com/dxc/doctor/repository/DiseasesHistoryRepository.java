@@ -13,5 +13,4 @@ public interface DiseasesHistoryRepository extends JpaRepository<DiseasesHistory
 
     @Query("select d.medicalTreatmentProfile.id from DiseasesHistory d where d.name = :name")
     Set<Long> getProfileIdsByDisease(@Param("name") String name);
-
 }

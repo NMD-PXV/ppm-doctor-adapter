@@ -56,13 +56,12 @@ public class DoctorService {
                 medicalProfileRepository.findByPatientIdEquals(id);
         if (medicalProfileExistedList.size() == 0) {
             result.append("New id profile(s):\n");
-            addProfiles(id, profiles, result); }
-            else {
-               updateProfile(id, profiles, medicalProfileExistedList, result);
-            }
+            addProfiles(id, profiles, result);
+        } else {
+            updateProfile(id, profiles, medicalProfileExistedList, result);
+        }
         return result.toString();
     }
-
 
 
     @Transactional
@@ -255,12 +254,10 @@ public class DoctorService {
 
     public List<MedicalTreatmentProfile> searchTreatmentProfiles(String name, String disease, String medicine) {
         Set<Long> ids = diseasesHistoryRepository.getProfileIdsByDisease(disease);
-        System.out.println(ids);
-//        return medicalProfileRepository.findMultiProfiles(ids).
-//                stream().
-//                map(ProfileUtil::entity2Profile).
-//                collect(Collectors.toList());
-        return null;
+        return medicalProfileRepository.findMultiProfiles(ids).
+                stream().
+                map(ProfileUtil::entity2Profile).
+                collect(Collectors.toList());
     }
 
     public List<MedicalTreatmentProfile> searchProfilesByPatientId(String id) {

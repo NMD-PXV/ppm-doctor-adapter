@@ -14,7 +14,8 @@ public class DiseasesHistory {
     @Column(name = "NAME")
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @ManyToOne
     private MedicalTreatmentProfileEntity medicalTreatmentProfile;
 
     public Long getId() {
@@ -33,4 +34,19 @@ public class DiseasesHistory {
         this.name = name;
     }
 
+    public MedicalTreatmentProfileEntity getMedicalTreatmentProfile() {
+        return medicalTreatmentProfile;
+    }
+
+    public void setMedicalTreatmentProfile(MedicalTreatmentProfileEntity medicalTreatmentProfile) {
+        this.medicalTreatmentProfile = medicalTreatmentProfile;
+    }
+
+    @Override
+    public String toString() {
+        return "DiseasesHistory{" +
+                "Id=" + Id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
