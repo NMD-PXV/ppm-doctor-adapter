@@ -161,7 +161,10 @@ definitions:
         type: "array"
         items:
           type: "string"
-          example: "Flu"
+        example:
+          - "Flu"
+          - "H1N1"
+          - "STD"
       prescription:
         $ref: "#/definitions/Prescription"
       medicalTestResult:
@@ -185,7 +188,9 @@ definitions:
         type: "array"
         items:
           type: "string"
-          example: "panadol extra"
+        example:
+          - "panadol extra"
+          - "paracetamol"
   Prescription:
     type: "object"
     properties:
