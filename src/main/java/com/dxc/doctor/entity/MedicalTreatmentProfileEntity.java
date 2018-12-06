@@ -13,9 +13,6 @@ public class MedicalTreatmentProfileEntity {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "PROFILE_ID")
-    private String profileId;
-
     @Column(name = "PATIENT_ID")
     private String patientId;
 
@@ -57,14 +54,6 @@ public class MedicalTreatmentProfileEntity {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getProfileId() {
-        return profileId;
-    }
-
-    public void setProfileId(String profileId) {
-        this.profileId = profileId;
     }
 
     public String getPatientId() {

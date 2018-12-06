@@ -1,8 +1,10 @@
 package com.dxc.doctor.service;
 
+import com.dxc.doctor.api.model.GivenMedicine;
 import com.dxc.doctor.api.model.MedicalTreatmentProfile;
 import com.dxc.doctor.common.Type;
 import com.dxc.doctor.entity.*;
+import com.dxc.doctor.exception.BadInputException;
 import com.dxc.doctor.repository.*;
 import com.dxc.doctor.util.Converter;
 import com.dxc.doctor.util.ProfileUtil;
@@ -37,7 +39,7 @@ public class DoctorService {
 
         //TODO check id;
         if (id == null) {
-            //TODO throw exception;
+            throw new BadInputException("The input id is null!");
         }
 
         //TODO check profiles
@@ -69,7 +71,7 @@ public class DoctorService {
          * else add profile in to a list and after the loop end, create new profiles in list
          */
         for (int i = 0; i < profiles.size(); i++)
-            if (profiles.get(i).getProfileId().equals(medicalProfileExistedList.get(i).getProfileId())) {
+            if (profiles.get(i).getId().equals(medicalProfileExistedList.get(i).getId())) {
 
                 //  Update MedicalTreatment Fields
                 medicalProfileExistedList.get(i).setDoctorUpdated(profiles.get(i).getDoctorUpdated());
@@ -142,7 +144,6 @@ public class DoctorService {
             medicalTreatmentProfileEntity.setDoctorUpdated(profileMapper.getDoctor());
             medicalTreatmentProfileEntity.setCreateDate(new Date());
             medicalTreatmentProfileEntity.setModifiedDate(new Date());
-            medicalTreatmentProfileEntity.setProfileId(profileId);
             medicalTreatmentProfileEntity.setPatientId(id);
 
             // set diseases history
@@ -164,7 +165,7 @@ public class DoctorService {
                     .getBeingUsed(), Type.BEING_USED.toString()));
             givenMedicineEntityList.addAll(Converter.convertMedicinesToEntity(profileMapper
                     .getPrescription()
-                    .getBeingUsed(), Type.RECENTLY_USED.toString()));
+                    .getRecentlyUsed(), Type.RECENTLY_USED.toString()));
 
 
             // set Given Prescription
@@ -261,7 +262,6 @@ public class DoctorService {
     public String searchTest(String id, String name) {
         //TODO check ID
         List<MedicalTreatmentProfileEntity> profiles = medicalProfileRepository.findByPatientIdEquals(id);
-
         for (MedicalTreatmentProfileEntity p : profiles) {
             Long idMedicalTest = p.getMedicalTestResult().getId();
             String allergicMedicines = medicalTestRepository.getProfileIdsByDisease(idMedicalTest);
