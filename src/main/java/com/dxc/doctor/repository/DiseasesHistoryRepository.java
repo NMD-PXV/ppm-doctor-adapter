@@ -6,13 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface DiseasesHistoryRepository extends JpaRepository<DiseasesHistory, Long> {
 
-//    @Query("select d.medical_treatment_profile from DiseasesHistory d where d.name = :name")
-//    HashSet<Long> getProfileIdsByDisease(String disease);
+    @Query("select d.medicalTreatmentProfile.id from DiseasesHistory d where d.name = :name")
+    Set<Long> getProfileIdsByDisease(@Param("name") String name);
 
 }

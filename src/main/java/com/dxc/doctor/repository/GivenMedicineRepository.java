@@ -26,5 +26,4 @@ public interface GivenMedicineRepository extends JpaRepository<GivenMedicineEnti
                                                  @Param("type") String type);
 
 
-//    List<GivenMedicineEntity> findByPrescriptionIdAndDeleted(Long prescriptionId, boolean deleted);
 }

@@ -17,7 +17,7 @@ public class V1ApiDelegateImp implements V1ApiDelegate {
 
     @Override
     public ResponseEntity<List<MedicalTreatmentProfile>> searchPatients(String name, String disease, String medicine) {
-        return null;
+        return ResponseEntity.ok(doctorService.searchTreatmentProfiles(name, disease, medicine));
     }
 
     @Override

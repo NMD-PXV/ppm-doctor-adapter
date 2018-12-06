@@ -253,13 +253,15 @@ public class DoctorService {
         return medicinesExsited;
     }
 
-//    public List<MedicalTreatmentProfile> searchTreatmentProfiles(String name, String disease, String medicine) {
-//        HashSet<Long> ids = diseasesHistoryRepository.getProfileIdsByDisease(disease);
+    public List<MedicalTreatmentProfile> searchTreatmentProfiles(String name, String disease, String medicine) {
+        Set<Long> ids = diseasesHistoryRepository.getProfileIdsByDisease(disease);
+        System.out.println(ids);
 //        return medicalProfileRepository.findMultiProfiles(ids).
 //                stream().
 //                map(ProfileUtil::entity2Profile).
 //                collect(Collectors.toList());
-//    }
+        return null;
+    }
 
     public List<MedicalTreatmentProfile> searchProfilesByPatientId(String id) {
         List<MedicalTreatmentProfileEntity> profilesEntity = medicalProfileRepository.findByPatientIdEquals(id);

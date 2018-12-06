@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 public class TestResultUtil {
     public static MedicalTestResult entity2TestResult(MedicalTestResultEntity entity){
         MedicalTestResult testResult = new MedicalTestResult();
+        testResult.setId(Converter.convertBigDecimalToLong(entity.getId()));
         testResult.setAllergicMedicines(Arrays.stream(entity.getAllergicMedicines().split(",")).collect(Collectors.toList()));
         testResult.setBloodType(entity.getBloodType());
         testResult.setUltraSound(entity.getUltraSound());

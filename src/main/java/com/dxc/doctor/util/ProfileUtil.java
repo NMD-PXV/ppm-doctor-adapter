@@ -15,7 +15,8 @@ public class ProfileUtil {
         profile.setCreatedDate(LocalDate.fromDateFields(entity.getCreateDate()));
         profile.setModifiedDate(LocalDate.fromDateFields(entity.getModifiedDate()));
         profile.setProfileId(entity.getProfileId());
-        profile.setDiseasesHistory(entity.getDiseasesHistory().stream().map(Objects::toString).collect(Collectors.toList()));
+        profile.setDiseasesHistory(entity.getDiseasesHistory().stream().map(Objects ->
+        { return Objects.getName();}).collect(Collectors.toList()));
         profile.setMedicalTestResult(TestResultUtil.entity2TestResult(entity.getMedicalTestResult()));
         profile.setDoctor(entity.getDoctor());
         profile.setDoctorUpdated(entity.getDoctorUpdated());
