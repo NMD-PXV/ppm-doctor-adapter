@@ -12,7 +12,7 @@ public class PrescriptionEntity {
     @Column(name = "ID")
     private Long id;
 
-    @OneToOne(optional=false, mappedBy = "prescription")
+    @OneToOne(optional = false, mappedBy = "prescription")
     private MedicalTreatmentProfileEntity medicalTreatmentProfileEntity;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

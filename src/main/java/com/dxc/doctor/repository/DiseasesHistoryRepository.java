@@ -12,5 +12,5 @@ import java.util.Set;
 public interface DiseasesHistoryRepository extends JpaRepository<DiseasesHistory, Long> {
 
     @Query("select d.medicalTreatmentProfile.id from DiseasesHistory d where d.name = :name")
-    Set<Long> getProfileIdsByDisease(@Param("name") String name);
+    Set<Long> getProfileIdsByDisease(@Param("name") String medicineName);
 }

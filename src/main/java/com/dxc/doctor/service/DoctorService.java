@@ -242,7 +242,24 @@ public class DoctorService {
                     collect(Collectors.toList());
         if (name != null)
             return searchProfilesByPatientId(name);
-        Set<Long> ids = diseasesHistoryRepository.getProfileIdsByDisease(disease);
+
+        if (disease != null && medicine != null) {
+            Set<Long> idsFromDisease = diseasesHistoryRepository.getProfileIdsByDisease(disease);
+            Set<Long> idsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+            idsFromMedicine.retainAll(idsFromDisease);
+
+            return medicalProfileRepository.findMultiProfiles(idsFromMedicine).
+                    stream().
+                    map(ProfileUtil::entity2Profile).
+                    collect(Collectors.toList());
+        }
+
+        Set<Long> ids = null;
+        if (disease != null)
+            ids = diseasesHistoryRepository.getProfileIdsByDisease(disease);
+        else if (medicine != null)
+            ids = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+
         return medicalProfileRepository.findMultiProfiles(ids).
                 stream().
                 map(ProfileUtil::entity2Profile).
