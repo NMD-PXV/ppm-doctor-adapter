@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Converter {
 
@@ -62,7 +63,7 @@ public class Converter {
         medicalTestResultEntity.setBloodType(profile.getMedicalTestResult().getBloodType());
         medicalTestResultEntity.setxRay(profile.getMedicalTestResult().getXRay());
         medicalTestResultEntity.setUltraSound(profile.getMedicalTestResult().getUltraSound());
-        medicalTestResultEntity.setAllergicMedicines(profile.getMedicalTestResult().getAllergicMedicines().toString());
+        medicalTestResultEntity.setAllergicMedicines(profile.getMedicalTestResult().getAllergicMedicines().stream().collect(Collectors.joining(",")));
         return medicalTestResultEntity;
     }
 

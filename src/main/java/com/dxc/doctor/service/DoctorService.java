@@ -247,6 +247,13 @@ public class DoctorService {
     }
 
     public List<MedicalTreatmentProfile> searchTreatmentProfiles(String name, String disease, String medicine) {
+        if (name == null && disease == null && medicine == null)
+            return medicalProfileRepository.findAll().
+                    stream().
+                    map(ProfileUtil::entity2Profile).
+                    collect(Collectors.toList());
+        if (name != null)
+            return searchProfilesByPatientId(name);
         Set<Long> ids = diseasesHistoryRepository.getProfileIdsByDisease(disease);
         return medicalProfileRepository.findMultiProfiles(ids).
                 stream().
