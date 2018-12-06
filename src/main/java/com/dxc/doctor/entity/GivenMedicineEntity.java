@@ -23,6 +23,9 @@ public class GivenMedicineEntity {
     @Column(name = "TYPE")
     private String type;
 
+    @ManyToOne
+    private PrescriptionEntity prescription;
+
     public Long getId() {
         return id;
     }
