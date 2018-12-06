@@ -4,8 +4,10 @@ package com.dxc.doctor.common;
 import org.springframework.http.HttpStatus;
 
 public enum MedicalProfilesStorageError {
-    PATIENT_ID_NOT_FOUND(0, HttpStatus.NOT_FOUND),
-    INVALID_INPUT(1, HttpStatus.BAD_REQUEST);
+    PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE(0, HttpStatus.NOT_FOUND),
+    INVALID_INPUT_PROFILES(1, HttpStatus.BAD_REQUEST),
+    PROFILES_NOT_FOUND(0, HttpStatus.NOT_FOUND);
+
 
     private final int code;
     private final HttpStatus httpStatus;

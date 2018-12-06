@@ -1,18 +1,24 @@
 package com.dxc.doctor.service;
 
 import com.dxc.doctor.api.model.MedicalTreatmentProfile;
+import com.dxc.doctor.common.MedicalProfilesStorageError;
 import com.dxc.doctor.common.Type;
 import com.dxc.doctor.entity.*;
 import com.dxc.doctor.exception.MedicalProfilesException;
 import com.dxc.doctor.repository.*;
 import com.dxc.doctor.util.Converter;
 import com.dxc.doctor.util.ProfileUtil;
+import io.swagger.util.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.dxc.doctor.common.MedicalProfilesStorageError.INVALID_INPUT_PROFILES;
+import static com.dxc.doctor.common.MedicalProfilesStorageError.PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE;
+import static com.dxc.doctor.common.MedicalProfilesStorageError.PROFILES_NOT_FOUND;
 
 @Service
 public class DoctorService {
@@ -32,13 +38,9 @@ public class DoctorService {
     @Transactional
     public String upsertProfiles(String id, List<MedicalTreatmentProfile> profiles) {
         StringBuffer result = new StringBuffer();
-
-        //TODO check id;
-        if (id == null) {
-            throw new MedicalProfilesException("The input id is null!");
-        }
-
-        //TODO check profiles
+        if (id == null) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
+        if(profiles.isEmpty())
+            throw new MedicalProfilesException(INVALID_INPUT_PROFILES, profiles);
         /**
          *  check the profiles of patient existed or not
          *  if the profiles existed then updateProfile
@@ -132,7 +134,6 @@ public class DoctorService {
     @Transactional
     public String addProfiles(String id, List<MedicalTreatmentProfile> profiles, StringBuffer result) {
         for (MedicalTreatmentProfile profileMapper : profiles) {
-
             // set profile info
             String profileId = UUID.randomUUID().toString();
             MedicalTreatmentProfileEntity medicalTreatmentProfileEntity = new MedicalTreatmentProfileEntity();
@@ -264,6 +265,7 @@ public class DoctorService {
     }
 
     public List<MedicalTreatmentProfile> searchProfilesByPatientId(String id) {
+        if(id == null || id.contains(" ")) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
         List<MedicalTreatmentProfileEntity> profilesEntity = medicalProfileRepository.findByPatientIdEquals(id);
         List<MedicalTreatmentProfile> profiles = profilesEntity.stream().map(e -> {
             MedicalTreatmentProfile profile = ProfileUtil.entity2Profile(e);
@@ -273,7 +275,7 @@ public class DoctorService {
     }
 
     public String searchTest(String id, String name) {
-        //TODO check ID
+        if(id == null || id.contains(" ")) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
         List<MedicalTreatmentProfileEntity> profiles = medicalProfileRepository.findByPatientIdEquals(id);
         for (MedicalTreatmentProfileEntity p : profiles) {
             Long idMedicalTest = p.getMedicalTestResult().getId();
