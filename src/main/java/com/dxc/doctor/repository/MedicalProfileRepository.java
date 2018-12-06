@@ -13,7 +13,7 @@ import java.util.List;
 public interface MedicalProfileRepository extends JpaRepository<MedicalTreatmentProfileEntity, Long> {
     List<MedicalTreatmentProfileEntity> findByPatientIdEquals(String patientId);
 
-    @Query("select p from MedicalTreatmentProfile where p.id in :ids")
-    List<MedicalTreatmentProfileEntity> findMultiProfiles(@Param("ids") HashSet<Long> ids);
+//    @Query("select p from MedicalTreatmentProfile where p.id in :ids")
+//    List<MedicalTreatmentProfileEntity> findMultiProfiles(@Param("ids") HashSet<Long> ids);
 }
 

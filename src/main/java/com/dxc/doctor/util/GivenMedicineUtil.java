@@ -6,6 +6,7 @@ import com.dxc.doctor.entity.GivenMedicineEntity;
 public class GivenMedicineUtil {
     protected static GivenMedicine entity2GivenMedicine(GivenMedicineEntity entity){
         GivenMedicine givenMedicine = new GivenMedicine();
+        givenMedicine.setId(Converter.convertBigDecimalToLong(entity.getId()));
         givenMedicine.setName(entity.getName());
         givenMedicine.setQuantity(entity.getQuantity());
         return givenMedicine;

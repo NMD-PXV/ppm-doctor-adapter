@@ -22,7 +22,7 @@ public class V1ApiDelegateImp implements V1ApiDelegate {
 
     @Override
     public ResponseEntity<List<MedicalTreatmentProfile>> searchProfilesByPatientId(String id) {
-        return null;
+        return ResponseEntity.ok(doctorService.searchProfilesByPatientId(id));
     }
 
     @Override

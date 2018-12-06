@@ -10,6 +10,7 @@ import com.dxc.doctor.entity.MedicalTestResultEntity;
 import com.dxc.doctor.entity.MedicalTreatmentProfileEntity;
 import com.dxc.doctor.entity.PrescriptionEntity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,7 @@ public class Converter {
 
 
 
-    public static List<GivenMedicineEntity> convertGivenMedicineToEntity(List<GivenMedicine> givenMedicines,
+    public static List<GivenMedicineEntity> convertMedicinesToEntity(List<GivenMedicine> givenMedicines,
     String type) {
         List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
         givenMedicines.stream().forEach(givenMedicineMapper -> {
@@ -33,7 +34,7 @@ public class Converter {
         return givenMedicineEntityList;
     }
 
-    public static List<GivenMedicineEntity> convertUpdateMedicine(List<GivenMedicine> givenMedicines,
+    public static List<GivenMedicineEntity> convertMedicinesForUpdate(List<GivenMedicine> givenMedicines,
                                                                          String type) {
         List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
         givenMedicines.stream().forEach(givenMedicineMapper -> {
@@ -57,12 +58,17 @@ public class Converter {
         return medicalTestResultEntity;
     }
 
-    public static MedicalTestResultEntity updateMedicalTestResult(MedicalTestResultEntity medicalTestResultEntity, MedicalTreatmentProfile profile) {
+    public static MedicalTestResultEntity convertMedicalTestResultForUpdate(MedicalTestResultEntity medicalTestResultEntity, MedicalTreatmentProfile profile) {
         medicalTestResultEntity.setBloodType(profile.getMedicalTestResult().getBloodType());
         medicalTestResultEntity.setxRay(profile.getMedicalTestResult().getXRay());
         medicalTestResultEntity.setUltraSound(profile.getMedicalTestResult().getUltraSound());
         medicalTestResultEntity.setAllergicMedicines(profile.getMedicalTestResult().getAllergicMedicines().toString());
         return medicalTestResultEntity;
+    }
+
+    public static BigDecimal convertBigDecimalToLong(Long id) {
+        BigDecimal bId = new BigDecimal(id.longValue());
+        return bId;
     }
 
 

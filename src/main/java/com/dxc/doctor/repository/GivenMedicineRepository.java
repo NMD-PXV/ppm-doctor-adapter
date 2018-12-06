@@ -16,10 +16,6 @@ import java.util.List;
 public interface GivenMedicineRepository extends JpaRepository<GivenMedicineEntity, Long> {
 
     @Query("SELECT medicines FROM GivenMedicineEntity medicines WHERE prescription_id = :prescriptionId AND " +
-            "deleted = false")
-    List<GivenMedicineEntity> getMedicinesByPreId(@Param("prescriptionId") Long prescriptionId);
-
-    @Query("SELECT medicines FROM GivenMedicineEntity medicines WHERE prescription_id = :prescriptionId AND " +
             "deleted = false AND type = :type")
     List<GivenMedicineEntity> getMedicinesByType(@Param("prescriptionId") Long prescriptionId,
                                                      @Param("type") String type);
