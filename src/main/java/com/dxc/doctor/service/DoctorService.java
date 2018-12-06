@@ -6,6 +6,7 @@ import com.dxc.doctor.entity.*;
 import com.dxc.doctor.repository.*;
 import com.dxc.doctor.util.Converter;
 import com.dxc.doctor.util.ProfileUtil;
+import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,24 +19,17 @@ import java.util.stream.Collectors;
 @Service
 public class DoctorService {
 
+    @Autowired
     private DiseasesHistoryRepository diseasesHistoryRepository;
+    @Autowired
     private MedicalProfileRepository medicalProfileRepository;
+    @Autowired
     private GivenMedicineRepository givenMedicineRepository;
+    @Autowired
     private PrescriptionRepository prescriptionRepository;
+    @Autowired
     private MedicalTestRepository medicalTestRepository;
 
-    @Autowired
-    public DoctorService(DiseasesHistoryRepository diseasesHistoryRepository,
-                         MedicalProfileRepository medicalProfileRepository,
-                         GivenMedicineRepository givenMedicineRepository,
-                         PrescriptionRepository prescriptionRepository,
-                         MedicalTestRepository medicalTestRepository) {
-        this.diseasesHistoryRepository = diseasesHistoryRepository;
-        this.medicalProfileRepository = medicalProfileRepository;
-        this.givenMedicineRepository = givenMedicineRepository;
-        this.prescriptionRepository = prescriptionRepository;
-        this.medicalTestRepository = medicalTestRepository;
-    }
 
     @Transactional
     public String upsertProfiles(String id, List<MedicalTreatmentProfile> profiles) {
@@ -270,5 +264,23 @@ public class DoctorService {
         }).collect(Collectors.toList());
         return profiles;
     }
+
+    public List<String> searchTest(String id, String name) {
+        //TODO check ID
+        List<MedicalTreatmentProfileEntity> profiles = medicalProfileRepository.findByPatientIdEquals(id);
+        if(profiles.size() != 0) {
+            profiles.stream().forEach(p -> {
+                Long idPre = p.getMedicalTestResult().getId();
+
+
+
+            });
+        } else {
+            //TODO throw exception
+        }
+
+        return null;
+    }
+
 }
 
