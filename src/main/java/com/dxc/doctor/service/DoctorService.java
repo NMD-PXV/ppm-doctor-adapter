@@ -1,20 +1,16 @@
 package com.dxc.doctor.service;
 
-import com.dxc.doctor.api.model.GivenMedicine;
 import com.dxc.doctor.api.model.MedicalTreatmentProfile;
 import com.dxc.doctor.common.Type;
 import com.dxc.doctor.entity.*;
-import com.dxc.doctor.exception.BadInputException;
+import com.dxc.doctor.exception.MedicalProfilesException;
 import com.dxc.doctor.repository.*;
 import com.dxc.doctor.util.Converter;
 import com.dxc.doctor.util.ProfileUtil;
-import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,7 +35,7 @@ public class DoctorService {
 
         //TODO check id;
         if (id == null) {
-            throw new BadInputException("The input id is null!");
+            throw new MedicalProfilesException("The input id is null!");
         }
 
         //TODO check profiles
