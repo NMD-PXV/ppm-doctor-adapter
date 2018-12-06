@@ -14,6 +14,9 @@ public class DiseasesHistory {
     @Column(name = "NAME")
     private String name;
 
+    @ManyToOne
+    private MedicalTreatmentProfileEntity medicalTreatmentProfile;
+
     public Long getId() {
         return Id;
     }
@@ -28,6 +31,14 @@ public class DiseasesHistory {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public MedicalTreatmentProfileEntity getMedicalTreatmentProfile() {
+        return medicalTreatmentProfile;
+    }
+
+    public void setMedicalTreatmentProfile(MedicalTreatmentProfileEntity medicalTreatmentProfile) {
+        this.medicalTreatmentProfile = medicalTreatmentProfile;
     }
 
     @Override

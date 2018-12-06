@@ -12,7 +12,6 @@ import java.util.List;
 @Repository
 public interface DiseasesHistoryRepository extends JpaRepository<DiseasesHistory, Long> {
 
-//    @Query("select d.medical_treatment_profile from DiseasesHistory d where d.name = :name")
-//    HashSet<Long> getProfileIdsByDisease(String disease);
-
+    @Query("select d from DiseasesHistory d where d.name = :name")
+    List<DiseasesHistory> getProfileIdsByDisease(@Param("name") String disease);
 }

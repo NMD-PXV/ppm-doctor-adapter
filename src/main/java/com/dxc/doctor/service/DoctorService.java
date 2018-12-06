@@ -56,13 +56,12 @@ public class DoctorService {
                 medicalProfileRepository.findByPatientIdEquals(id);
         if (medicalProfileExistedList.size() == 0) {
             result.append("New id profile(s):\n");
-            addProfiles(id, profiles, result); }
-            else {
-               updateProfile(id, profiles, medicalProfileExistedList, result);
-            }
+            addProfiles(id, profiles, result);
+        } else {
+            updateProfile(id, profiles, medicalProfileExistedList, result);
+        }
         return result.toString();
     }
-
 
 
     @Transactional
@@ -253,13 +252,16 @@ public class DoctorService {
         return medicinesExsited;
     }
 
-//    public List<MedicalTreatmentProfile> searchTreatmentProfiles(String name, String disease, String medicine) {
-//        HashSet<Long> ids = diseasesHistoryRepository.getProfileIdsByDisease(disease);
-//        return medicalProfileRepository.findMultiProfiles(ids).
-//                stream().
-//                map(ProfileUtil::entity2Profile).
-//                collect(Collectors.toList());
-//    }
+    public List<MedicalTreatmentProfile> searchTreatmentProfiles(String name, String disease, String medicine) {
+        List<DiseasesHistory> histories = diseasesHistoryRepository.getProfileIdsByDisease(disease);
+        Set<Long> ids = new HashSet<>(histories.stream().
+                map(d -> d.getMedicalTreatmentProfile().
+                        getId()).collect(Collectors.toList()));
+        return medicalProfileRepository.findMultiProfiles(ids).
+                stream().
+                map(ProfileUtil::entity2Profile).
+                collect(Collectors.toList());
+    }
 
     public List<MedicalTreatmentProfile> searchProfilesByPatientId(String id) {
         List<MedicalTreatmentProfileEntity> profilesEntity = medicalProfileRepository.findByPatientIdEquals(id);
