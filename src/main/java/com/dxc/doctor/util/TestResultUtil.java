@@ -1,7 +1,9 @@
 package com.dxc.doctor.util;
 
 import com.dxc.doctor.api.model.MedicalTestResult;
+import com.dxc.doctor.api.model.MedicalTreatmentProfile;
 import com.dxc.doctor.entity.MedicalTestResultEntity;
+import com.dxc.doctor.entity.MedicalTreatmentProfileEntity;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -15,5 +17,15 @@ public class TestResultUtil {
         testResult.setUltraSound(entity.getUltraSound());
         testResult.setXRay(entity.getxRay());
         return testResult;
+    }
+
+    public static MedicalTestResultEntity testResult2Entity(MedicalTestResult testResult) {
+        MedicalTestResultEntity entity = new MedicalTestResultEntity();
+        entity.setBloodType(testResult.getBloodType());
+        entity.setxRay(testResult.getXRay());
+        entity.setUltraSound(testResult.getUltraSound());
+        entity.setAllergicMedicines(testResult.getAllergicMedicines().stream()
+                .collect(Collectors.joining(",")));
+        return entity;
     }
 }

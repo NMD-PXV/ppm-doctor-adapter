@@ -36,9 +36,9 @@ public class DoctorService {
 
 
     @Transactional
-    public String upsertProfiles(String id, List<MedicalTreatmentProfile> profiles) {
+    public String upsertProfiles(String patientId, List<MedicalTreatmentProfile> profiles) {
         StringBuffer result = new StringBuffer();
-        if (id == null) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
+        if (patientId == null) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, patientId);
         if(profiles.isEmpty())
             throw new MedicalProfilesException(INVALID_INPUT_PROFILES, profiles);
         /**
@@ -47,19 +47,33 @@ public class DoctorService {
          *  else create profiles
          */
         List<MedicalTreatmentProfileEntity> medicalProfileExistedList =
-                medicalProfileRepository.findByPatientIdEquals(id);
+                medicalProfileRepository.findByPatientIdEquals(patientId);
         if (medicalProfileExistedList.size() == 0) {
             result.append("New id profile(s):\n");
-            addProfiles(id, profiles, result);
+            addProfiles(patientId, profiles, result);
         } else {
-            updateProfile(id, profiles, medicalProfileExistedList, result);
+            updateProfile(patientId, profiles, medicalProfileExistedList, result);
+        }
+        return result.toString();
+    }
+
+    @Transactional
+    public String addProfiles(String patientId, List<MedicalTreatmentProfile> profiles, StringBuffer result) {
+        for (MedicalTreatmentProfile profileMapper : profiles) {
+            MedicalTreatmentProfileEntity medicalProfileEntity = ProfileUtil.profile2entity(profileMapper);
+            medicalProfileEntity.setPatientId(patientId);
+            // save new profile to database
+            medicalProfileRepository.saveAndFlush(medicalProfileEntity);
+            result.append("ProfileId: ");
+            result.append(medicalProfileEntity.getId());
+            result.append("\n");
         }
         return result.toString();
     }
 
 
     @Transactional
-    public String updateProfile(String id, List<MedicalTreatmentProfile> profiles,
+    public String updateProfile(String patientId, List<MedicalTreatmentProfile> profiles,
                                 List<MedicalTreatmentProfileEntity> medicalProfileExistedList,
                                 StringBuffer result) {
         List<MedicalTreatmentProfile> medicalTreatmentProfileList = new ArrayList<>();
@@ -69,9 +83,11 @@ public class DoctorService {
          * else add profile in to a list and after the loop end, create new profiles in list
          */
         for (int i = 0; i < profiles.size(); i++)
-            if (profiles.get(i).getId().equals(medicalProfileExistedList.get(i).getId())) {
+            if (medicalProfileExistedList.get(i).getId().equals(profiles.get(i).getId().longValue())) {
 
                 //  Update MedicalTreatment Fields
+
+                medicalProfileExistedList.get(i).setId(profiles.get(i).getId().longValue());
                 medicalProfileExistedList.get(i).setDoctorUpdated(profiles.get(i).getDoctorUpdated());
                 medicalProfileExistedList.get(i).setModifiedDate(new Date());
 
@@ -92,13 +108,13 @@ public class DoctorService {
                         medicalProfileExistedList.get(i).getPrescription().getId(), Type.BEING_USED.toString());
                 List<GivenMedicineEntity> beingUsedMapperList = Converter.convertMedicinesForUpdate(
                         profiles.get(i).getPrescription().getBeingUsed(), Type.BEING_USED.toString());
-                List<GivenMedicineEntity> beingUsedMedicines = updateGivenMedicine(givenMedicinesBeingUsed, beingUsedMapperList);
+                List<GivenMedicineEntity> beingUsedMedicines = updateGivenMedicines(givenMedicinesBeingUsed, beingUsedMapperList);
 
                 List<GivenMedicineEntity> givenMedicinesRecentlyUsed = givenMedicineRepository.getMedicinesByType(
                         medicalProfileExistedList.get(i).getPrescription().getId(), Type.RECENTLY_USED.toString());
                 List<GivenMedicineEntity> recentlyUsedMapperList = Converter.convertMedicinesForUpdate(
                         profiles.get(i).getPrescription().getRecentlyUsed(), Type.RECENTLY_USED.toString());
-                List<GivenMedicineEntity> recentlyUsedMedicines = updateGivenMedicine(givenMedicinesRecentlyUsed, recentlyUsedMapperList);
+                List<GivenMedicineEntity> recentlyUsedMedicines = updateGivenMedicines(givenMedicinesRecentlyUsed, recentlyUsedMapperList);
 
                 List<GivenMedicineEntity> medicinesUpdated = new ArrayList<>();
                 medicinesUpdated.addAll(beingUsedMedicines);
@@ -120,7 +136,7 @@ public class DoctorService {
                 medicalProfileRepository.save(medicalProfileExistedList.get(i));
                 result.append("Updated: ");
                 result.append("\n");
-                result.append(id);
+                result.append(patientId);
                 result.append("\n");
             } else {
                 medicalTreatmentProfileList.add(profiles.get(i));
@@ -128,61 +144,11 @@ public class DoctorService {
         if (medicalProfileExistedList.size() == 0) {
             return result.toString();
         }
-        return addProfiles(id, medicalTreatmentProfileList, result);
+        return addProfiles(patientId, medicalTreatmentProfileList, result);
     }
 
     @Transactional
-    public String addProfiles(String id, List<MedicalTreatmentProfile> profiles, StringBuffer result) {
-        for (MedicalTreatmentProfile profileMapper : profiles) {
-            // set profile info
-            String profileId = UUID.randomUUID().toString();
-            MedicalTreatmentProfileEntity medicalTreatmentProfileEntity = new MedicalTreatmentProfileEntity();
-            medicalTreatmentProfileEntity.setDoctor(profileMapper.getDoctor());
-            medicalTreatmentProfileEntity.setDoctorUpdated(profileMapper.getDoctor());
-            medicalTreatmentProfileEntity.setCreateDate(new Date());
-            medicalTreatmentProfileEntity.setModifiedDate(new Date());
-            medicalTreatmentProfileEntity.setPatientId(id);
-
-            // set diseases history
-            List<DiseasesHistory> diseasesEntityList = profileMapper.getDiseasesHistory().stream().map(d -> {
-                DiseasesHistory diseasesHistory = new DiseasesHistory();
-                diseasesHistory.setName(d);
-                return diseasesHistory;
-            }).collect(Collectors.toList());
-            medicalTreatmentProfileEntity.setDiseasesHistory(diseasesEntityList);
-
-            // set medical Test result
-            medicalTreatmentProfileEntity.setMedicalTestResult(
-                    Converter.convertMedicalTestResultToEntity(profileMapper));
-
-            // set Given Medicine
-            List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
-            givenMedicineEntityList.addAll(Converter.convertMedicinesToEntity(profileMapper
-                    .getPrescription()
-                    .getBeingUsed(), Type.BEING_USED.toString()));
-            givenMedicineEntityList.addAll(Converter.convertMedicinesToEntity(profileMapper
-                    .getPrescription()
-                    .getRecentlyUsed(), Type.RECENTLY_USED.toString()));
-
-
-            // set Given Prescription
-            PrescriptionEntity prescriptionEntity = new PrescriptionEntity();
-            prescriptionEntity.setGivenMedicines(givenMedicineEntityList);
-            medicalTreatmentProfileEntity.setPrescription(prescriptionEntity);
-
-            // save new profile to database
-            medicalProfileRepository.saveAndFlush(medicalTreatmentProfileEntity);
-            result.append("Created: ");
-            result.append("\n");
-            result.append(profileId);
-            result.append("\n");
-        }
-        return result.toString();
-    }
-
-
-    @Transactional
-    private List<GivenMedicineEntity> updateGivenMedicine(List<GivenMedicineEntity> medicinesExsited
+    private List<GivenMedicineEntity> updateGivenMedicines(List<GivenMedicineEntity> medicinesExsited
             , List<GivenMedicineEntity> medicinesMapper) {
         List<GivenMedicineEntity> newMedicines = new ArrayList<>();
         if (medicinesExsited.size() <= medicinesMapper.size()) {

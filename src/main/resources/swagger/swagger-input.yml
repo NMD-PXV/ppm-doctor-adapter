@@ -140,7 +140,7 @@ definitions:
       id:
         type: "number"
         format: "long"
-      profileId:
+      patientId:
         type: "string"
       createdDate:
         type: "string"
