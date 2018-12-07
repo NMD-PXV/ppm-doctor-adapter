@@ -50,9 +50,8 @@ public class DoctorService {
         if (medicalProfileExistedList.isEmpty()) {
             result.append("New id profile(s):\n");
             addProfiles(patientId, profiles, result);
-        } else {
+        } else
             updateProfile(patientId, profiles, medicalProfileExistedList, result);
-        }
         return result.toString();
     }
 
@@ -83,23 +82,17 @@ public class DoctorService {
         //TODO BUG BUGGGGGGGGGGGGGGGGGGG
         for (int i = 0; i < profiles.size(); i++)
             if (medicalProfileExistedList.get(i).getId().equals(profiles.get(i).getId().longValue())) {
-
                 //  Update MedicalTreatment Fields
                 medicalProfileExistedList.get(i).setId(profiles.get(i).getId().longValue());
                 medicalProfileExistedList.get(i).setDoctorUpdated(profiles.get(i).getDoctorUpdated());
                 medicalProfileExistedList.get(i).setModifiedDate(new Date());
 
-
                 // update diseases history
-                List<DiseasesHistory> diseasesHistoryList = new ArrayList<>();
                 List<String> diseasesMapper = profiles.get(i).getDiseasesHistory();
-                diseasesHistoryList = diseasesMapper.stream().map(d -> {
-                    DiseasesHistory disease = new DiseasesHistory();
-                    disease.setName(d);
-                    return disease;
-                }).collect(Collectors.toList());
+                List<DiseasesHistory> diseasesHistoryList = diseasesMapper.stream().
+                        map(DiseasesHistory::new).
+                        collect(Collectors.toList());
                 medicalProfileExistedList.get(i).setDiseasesHistory(diseasesHistoryList);
-
 
                 // Update GivenMedicine
                 List<GivenMedicineEntity> givenMedicinesBeingUsed = givenMedicineRepository.getMedicinesByType(
@@ -136,22 +129,20 @@ public class DoctorService {
                 result.append("\n");
                 result.append(patientId);
                 result.append("\n");
-            } else {
+            } else
                 medicalTreatmentProfileList.add(profiles.get(i));
-            }
-        if (medicalProfileExistedList.isEmpty()) {
+        if (medicalProfileExistedList.isEmpty())
             return result.toString();
-        }
         return addProfiles(patientId, medicalTreatmentProfileList, result);
     }
 
     @Transactional
-    private List<GivenMedicineEntity> updateGivenMedicines(List<GivenMedicineEntity> medicinesExsited
+    private List<GivenMedicineEntity> updateGivenMedicines(List<GivenMedicineEntity> medicinesExisted
             , List<GivenMedicineEntity> medicinesMapper) {
         List<GivenMedicineEntity> newMedicines = new ArrayList<>();
-        if (medicinesExsited.size() <= medicinesMapper.size()) {
+        if (medicinesExisted.size() <= medicinesMapper.size()) {
             for (GivenMedicineEntity medicineMapper : medicinesMapper) {
-                for (GivenMedicineEntity medicineExisted : medicinesExsited) {
+                for (GivenMedicineEntity medicineExisted : medicinesExisted) {
                     if (medicineExisted.getId().equals(medicineMapper.getId())) {
                         GivenMedicineEntity g = givenMedicineRepository.getMedicineById(medicineExisted.getId(),
                                 medicineExisted.getType());
@@ -171,9 +162,9 @@ public class DoctorService {
                     }
                 }
             }
-            medicinesExsited.addAll(newMedicines);
+            medicinesExisted.addAll(newMedicines);
         } else {
-            for (GivenMedicineEntity medicineExisted : medicinesExsited) {
+            for (GivenMedicineEntity medicineExisted : medicinesExisted) {
                 for (GivenMedicineEntity medicineMapper : medicinesMapper) {
                     GivenMedicineEntity g = givenMedicineRepository.getMedicineById(medicineMapper.getId(),
                             medicineMapper.getType());
@@ -190,10 +181,9 @@ public class DoctorService {
                 }
             }
         }
-        if (newMedicines != null) {
-            medicinesExsited.addAll(newMedicines);
-        }
-        return medicinesExsited;
+        if (newMedicines != null)
+            medicinesExisted.addAll(newMedicines);
+        return medicinesExisted;
     }
 
     public List<MedicalTreatmentProfile> searchTreatmentProfiles(String name, String disease, String medicine) {
@@ -237,9 +227,12 @@ public class DoctorService {
         if (id == null || id.contains(" "))
             throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
         List<MedicalTreatmentProfileEntity> profilesEntity = medicalProfileRepository.findByPatientIdEquals(id);
+
         if (profilesEntity.isEmpty())
             throw new MedicalProfilesException(PROFILES_NOT_FOUND);
-        return profilesEntity.stream().map(ProfileUtil::entity2Profile).collect(Collectors.toList());
+        return profilesEntity.stream().
+                map(ProfileUtil::entity2Profile).
+                collect(Collectors.toList());
     }
 
     public String searchTest(String id, String name) {
@@ -251,9 +244,8 @@ public class DoctorService {
         for (MedicalTreatmentProfileEntity p : profiles) {
             Long idMedicalTest = p.getMedicalTestResult().getId();
             String allergicMedicines = medicalTestRepository.getProfileIdsByDisease(idMedicalTest);
-            if (Arrays.stream(allergicMedicines.split(",")).collect(Collectors.toList()).contains(name)) {
+            if (Arrays.stream(allergicMedicines.split(",")).collect(Collectors.toList()).contains(name))
                 return "found allergicMedicine";
-            }
         }
         return "Not found allergicMedicine";
     }
