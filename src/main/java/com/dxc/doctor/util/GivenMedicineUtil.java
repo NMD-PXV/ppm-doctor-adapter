@@ -19,8 +19,8 @@ public class GivenMedicineUtil {
     protected static GivenMedicineEntity givenMedicineToEntity(GivenMedicine givenMedicines,
                                                              String type) {
         GivenMedicineEntity entities = new GivenMedicineEntity();
-        entities.setName(entities.getName());
-        entities.setQuantity(entities.getQuantity());
+        entities.setName(givenMedicines.getName());
+        entities.setQuantity(givenMedicines.getQuantity());
         entities.setType(type);
         entities.setDeleted(false);
         return entities;

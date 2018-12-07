@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
   title: "PPM Doctor Adapter"
 tags:
-- name: "doctor"
+- name: "profiles"
   description: "Everything about doctor adapter"
 schemes:
 - "https"
@@ -13,7 +13,7 @@ paths:
   /v1/patients/{id}/profiles:
     post:
       tags:
-      - "doctor"
+      - "profiles"
       summary: "upsert profiles to a patient"
       description: "upsert profiles to a patient by patient_id"
       operationId: "upsertProfiles"
@@ -44,7 +44,7 @@ paths:
           description: "Internal server error"
     get:
       tags:
-      - "doctor"
+      - "profiles"
       summary: "search profiles of a patient"
       description: "search profiles by patientId"
       operationId: "searchProfilesByPatientId"
@@ -70,7 +70,7 @@ paths:
   v1/patients:
     get:
       tags:
-      - "doctor"
+      - "profiles"
       summary: "get patient profiles"
       description: "get patient profiles by name, disease, medicine. If no query then return all patient profiles"
       operationId: "searchPatients"
@@ -107,7 +107,7 @@ paths:
   v1/patients/{id}/profiles/tests:
     get:
       tags:
-      - "doctor"
+      - "profiles"
       summary: "get info about patient be allergic to a specific medicine"
       description: "using id on path and query name to get info about patient be allergic to a specific medicine"
       operationId: "searchTest"

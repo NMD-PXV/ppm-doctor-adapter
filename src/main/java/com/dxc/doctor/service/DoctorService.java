@@ -80,6 +80,7 @@ public class DoctorService {
          * if profile existed then update that profile
          * else add profile in to a list and after the loop end, create new profiles in list
          */
+        //TODO BUG BUGGGGGGGGGGGGGGGGGGG
         for (int i = 0; i < profiles.size(); i++)
             if (medicalProfileExistedList.get(i).getId().equals(profiles.get(i).getId().longValue())) {
 
@@ -230,6 +231,7 @@ public class DoctorService {
                 map(ProfileUtil::entity2Profile).
                 collect(Collectors.toList());
     }
+
 
     public List<MedicalTreatmentProfile> searchProfilesByPatientId(String id) {
         if (id == null || id.contains(" "))
