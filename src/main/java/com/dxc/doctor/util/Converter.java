@@ -20,21 +20,6 @@ import java.util.stream.Collectors;
 public class Converter {
 
 
-
-    public static List<GivenMedicineEntity> convertMedicinesToEntity(List<GivenMedicine> givenMedicines,
-    String type) {
-        List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
-        givenMedicines.stream().forEach(givenMedicineMapper -> {
-            GivenMedicineEntity givenMedicineEntity = new GivenMedicineEntity();
-            givenMedicineEntity.setName(givenMedicineMapper.getName());
-            givenMedicineEntity.setQuantity(givenMedicineMapper.getQuantity());
-            givenMedicineEntity.setType(type);
-            givenMedicineEntity.setDeleted(false);
-            givenMedicineEntityList.add(givenMedicineEntity);
-        });
-        return givenMedicineEntityList;
-    }
-
     public static List<GivenMedicineEntity> convertMedicinesForUpdate(List<GivenMedicine> givenMedicines,
                                                                          String type) {
         List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
@@ -48,15 +33,6 @@ public class Converter {
             givenMedicineEntityList.add(givenMedicineEntity);
         });
         return givenMedicineEntityList;
-    }
-
-    public static MedicalTestResultEntity convertMedicalTestResultToEntity(MedicalTreatmentProfile profile) {
-        MedicalTestResultEntity medicalTestResultEntity = new MedicalTestResultEntity();
-        medicalTestResultEntity.setBloodType(profile.getMedicalTestResult().getBloodType());
-        medicalTestResultEntity.setxRay(profile.getMedicalTestResult().getXRay());
-        medicalTestResultEntity.setUltraSound(profile.getMedicalTestResult().getUltraSound());
-        medicalTestResultEntity.setAllergicMedicines(profile.getMedicalTestResult().getAllergicMedicines().stream().collect(Collectors.joining(",")));
-        return medicalTestResultEntity;
     }
 
     public static MedicalTestResultEntity convertMedicalTestResultForUpdate(MedicalTestResultEntity medicalTestResultEntity, MedicalTreatmentProfile profile) {

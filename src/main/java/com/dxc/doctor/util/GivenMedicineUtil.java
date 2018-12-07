@@ -16,17 +16,13 @@ public class GivenMedicineUtil {
         return givenMedicine;
     }
 
-    protected static List<GivenMedicineEntity> givenMedicineToEntity(List<GivenMedicine> givenMedicines,
+    protected static GivenMedicineEntity givenMedicineToEntity(GivenMedicine givenMedicines,
                                                              String type) {
-        List<GivenMedicineEntity> entities = new ArrayList<>();
-        givenMedicines.stream().forEach(givenMedicineMapper -> {
-            GivenMedicineEntity givenMedicineEntity = new GivenMedicineEntity();
-            givenMedicineEntity.setName(givenMedicineMapper.getName());
-            givenMedicineEntity.setQuantity(givenMedicineMapper.getQuantity());
-            givenMedicineEntity.setType(type);
-            givenMedicineEntity.setDeleted(false);
-            entities.add(givenMedicineEntity);
-        });
+        GivenMedicineEntity entities = new GivenMedicineEntity();
+        entities.setName(entities.getName());
+        entities.setQuantity(entities.getQuantity());
+        entities.setType(type);
+        entities.setDeleted(false);
         return entities;
     }
 }

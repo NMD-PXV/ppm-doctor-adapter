@@ -38,8 +38,9 @@ public class DoctorService {
     @Transactional
     public String upsertProfiles(String patientId, List<MedicalTreatmentProfile> profiles) {
         StringBuffer result = new StringBuffer();
-        if (patientId == null) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, patientId);
-        if(profiles.isEmpty())
+        if (patientId == null || patientId.contains(" "))
+            throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, patientId);
+        if (profiles.isEmpty())
             throw new MedicalProfilesException(INVALID_INPUT_PROFILES, profiles);
         /**
          *  check the profiles of patient existed or not
@@ -48,7 +49,7 @@ public class DoctorService {
          */
         List<MedicalTreatmentProfileEntity> medicalProfileExistedList =
                 medicalProfileRepository.findByPatientIdEquals(patientId);
-        if (medicalProfileExistedList.size() == 0) {
+        if (medicalProfileExistedList.isEmpty()) {
             result.append("New id profile(s):\n");
             addProfiles(patientId, profiles, result);
         } else {
@@ -71,7 +72,6 @@ public class DoctorService {
         return result.toString();
     }
 
-
     @Transactional
     public String updateProfile(String patientId, List<MedicalTreatmentProfile> profiles,
                                 List<MedicalTreatmentProfileEntity> medicalProfileExistedList,
@@ -86,7 +86,6 @@ public class DoctorService {
             if (medicalProfileExistedList.get(i).getId().equals(profiles.get(i).getId().longValue())) {
 
                 //  Update MedicalTreatment Fields
-
                 medicalProfileExistedList.get(i).setId(profiles.get(i).getId().longValue());
                 medicalProfileExistedList.get(i).setDoctorUpdated(profiles.get(i).getDoctorUpdated());
                 medicalProfileExistedList.get(i).setModifiedDate(new Date());
@@ -141,7 +140,7 @@ public class DoctorService {
             } else {
                 medicalTreatmentProfileList.add(profiles.get(i));
             }
-        if (medicalProfileExistedList.size() == 0) {
+        if (medicalProfileExistedList.isEmpty()) {
             return result.toString();
         }
         return addProfiles(patientId, medicalTreatmentProfileList, result);
@@ -231,17 +230,15 @@ public class DoctorService {
     }
 
     public List<MedicalTreatmentProfile> searchProfilesByPatientId(String id) {
-        if(id == null || id.contains(" ")) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
+        if (id == null || id.contains(" "))
+            throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
         List<MedicalTreatmentProfileEntity> profilesEntity = medicalProfileRepository.findByPatientIdEquals(id);
-        List<MedicalTreatmentProfile> profiles = profilesEntity.stream().map(e -> {
-            MedicalTreatmentProfile profile = ProfileUtil.entity2Profile(e);
-            return profile;
-        }).collect(Collectors.toList());
-        return profiles;
+        return profilesEntity.stream().map(ProfileUtil::entity2Profile).collect(Collectors.toList());
     }
 
     public String searchTest(String id, String name) {
-        if(id == null || id.contains(" ")) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
+        if (id == null || id.contains(" "))
+            throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
         List<MedicalTreatmentProfileEntity> profiles = medicalProfileRepository.findByPatientIdEquals(id);
         for (MedicalTreatmentProfileEntity p : profiles) {
             Long idMedicalTest = p.getMedicalTestResult().getId();
