@@ -1,14 +1,12 @@
 package com.dxc.doctor.service;
 
 import com.dxc.doctor.api.model.MedicalTreatmentProfile;
-import com.dxc.doctor.common.MedicalProfilesStorageError;
 import com.dxc.doctor.common.Type;
 import com.dxc.doctor.entity.*;
 import com.dxc.doctor.exception.MedicalProfilesException;
 import com.dxc.doctor.repository.*;
 import com.dxc.doctor.util.Converter;
 import com.dxc.doctor.util.ProfileUtil;
-import io.swagger.util.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +37,7 @@ public class DoctorService {
     public String upsertProfiles(String patientId, List<MedicalTreatmentProfile> profiles) {
         StringBuffer result = new StringBuffer();
         if (patientId == null) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, patientId);
-        if(profiles.isEmpty())
+        if (profiles.isEmpty())
             throw new MedicalProfilesException(INVALID_INPUT_PROFILES, profiles);
         /**
          *  check the profiles of patient existed or not
@@ -212,6 +210,8 @@ public class DoctorService {
             Set<Long> idsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
             idsFromMedicine.retainAll(idsFromDisease);
 
+            if (idsFromMedicine.isEmpty())
+                throw new MedicalProfilesException(PROFILES_NOT_FOUND);
             return medicalProfileRepository.findMultiProfiles(idsFromMedicine).
                     stream().
                     map(ProfileUtil::entity2Profile).
@@ -224,6 +224,8 @@ public class DoctorService {
         else if (medicine != null)
             ids = givenMedicineRepository.getPrescriptionIdsByName(medicine);
 
+        if (ids.isEmpty())
+            throw new MedicalProfilesException(PROFILES_NOT_FOUND);
         return medicalProfileRepository.findMultiProfiles(ids).
                 stream().
                 map(ProfileUtil::entity2Profile).
@@ -231,8 +233,11 @@ public class DoctorService {
     }
 
     public List<MedicalTreatmentProfile> searchProfilesByPatientId(String id) {
-        if(id == null || id.contains(" ")) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
+        if (id == null || id.contains(" "))
+            throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
         List<MedicalTreatmentProfileEntity> profilesEntity = medicalProfileRepository.findByPatientIdEquals(id);
+        if (profilesEntity.isEmpty())
+            throw new MedicalProfilesException(PROFILES_NOT_FOUND);
         List<MedicalTreatmentProfile> profiles = profilesEntity.stream().map(e -> {
             MedicalTreatmentProfile profile = ProfileUtil.entity2Profile(e);
             return profile;
@@ -241,8 +246,11 @@ public class DoctorService {
     }
 
     public String searchTest(String id, String name) {
-        if(id == null || id.contains(" ")) throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
+        if (id == null || id.contains(" "))
+            throw new MedicalProfilesException(PATIENT_ID_IS_NULL_OR_CONTAINS_SPACE, id);
         List<MedicalTreatmentProfileEntity> profiles = medicalProfileRepository.findByPatientIdEquals(id);
+        if (profiles.isEmpty())
+            throw new MedicalProfilesException(PROFILES_NOT_FOUND);
         for (MedicalTreatmentProfileEntity p : profiles) {
             Long idMedicalTest = p.getMedicalTestResult().getId();
             String allergicMedicines = medicalTestRepository.getProfileIdsByDisease(idMedicalTest);
