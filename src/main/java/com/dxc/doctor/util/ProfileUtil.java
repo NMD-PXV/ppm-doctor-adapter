@@ -5,13 +5,14 @@ import com.dxc.doctor.entity.DiseasesHistory;
 import com.dxc.doctor.entity.MedicalTreatmentProfileEntity;
 import org.joda.time.LocalDate;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.stream.Collectors;
 
 public class ProfileUtil {
     public static MedicalTreatmentProfile entity2Profile(MedicalTreatmentProfileEntity entity) {
         MedicalTreatmentProfile profile = new MedicalTreatmentProfile();
-        profile.setId(Converter.convertBigDecimalToLong(entity.getId()));
+        profile.setId(new BigDecimal(entity.getId()));
         profile.setCreatedDate(LocalDate.fromDateFields(entity.getCreateDate()));
         profile.setModifiedDate(LocalDate.fromDateFields(entity.getModifiedDate()));
         profile.setDiseasesHistory(entity.getDiseasesHistory().stream().map(DiseasesHistory::getName).collect(Collectors.toList()));
@@ -30,11 +31,7 @@ public class ProfileUtil {
         profileEntity.setCreateDate(new Date());
         profileEntity.setModifiedDate(new Date());
         profileEntity.setPatientId(profile.getPatientId());
-        profileEntity.setDiseasesHistory(profile.getDiseasesHistory().stream().map(d -> {
-            DiseasesHistory disease = new DiseasesHistory();
-            disease.setName(d);
-            return disease;
-        }).collect(Collectors.toList()));
+        profileEntity.setDiseasesHistory(profile.getDiseasesHistory().stream().map(DiseasesHistory::new).collect(Collectors.toList()));
         profileEntity.setMedicalTestResult(TestResultUtil.testResult2Entity(profile.getMedicalTestResult()));
         profileEntity.setPrescription(PrescriptionUtil.prescription2Entity(profile.getPrescription()));
         return profileEntity;

@@ -42,6 +42,10 @@ public class DiseasesHistory {
         this.medicalTreatmentProfile = medicalTreatmentProfile;
     }
 
+    public DiseasesHistory(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "DiseasesHistory{" +
