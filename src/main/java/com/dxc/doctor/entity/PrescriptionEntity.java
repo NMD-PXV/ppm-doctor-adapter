@@ -1,10 +1,17 @@
 package com.dxc.doctor.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "Prescription")
+@Getter
+@Setter
+@Builder
 public class PrescriptionEntity {
 
     @Id
@@ -19,29 +26,13 @@ public class PrescriptionEntity {
     @JoinColumn(name = "PRESCRIPTION_ID")
     private List<GivenMedicineEntity> givenMedicines;
 
-    public Long getId() {
-        return id;
+    public PrescriptionEntity() {
     }
 
-    public void setId(Long id) {
+    public PrescriptionEntity(Long id, MedicalTreatmentProfileEntity medicalTreatmentProfileEntity,
+                              List<GivenMedicineEntity> givenMedicines) {
         this.id = id;
-    }
-
-    public MedicalTreatmentProfileEntity getMedicalTreatmentProfileEntity() {
-        return medicalTreatmentProfileEntity;
-    }
-
-    public void setMedicalTreatmentProfileEntity(MedicalTreatmentProfileEntity medicalTreatmentProfileEntity) {
         this.medicalTreatmentProfileEntity = medicalTreatmentProfileEntity;
-    }
-
-    public List<GivenMedicineEntity> getGivenMedicines() {
-        return givenMedicines;
-    }
-
-    public void setGivenMedicines(List<GivenMedicineEntity> givenMedicines) {
         this.givenMedicines = givenMedicines;
     }
-
-
 }

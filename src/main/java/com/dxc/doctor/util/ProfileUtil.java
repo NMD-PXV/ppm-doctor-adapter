@@ -25,15 +25,23 @@ public class ProfileUtil {
     }
 
     public static MedicalTreatmentProfileEntity profile2entity(MedicalTreatmentProfile profile) {
-        MedicalTreatmentProfileEntity profileEntity = new MedicalTreatmentProfileEntity();
-        profileEntity.setDoctor(profile.getDoctor());
-        profileEntity.setDoctorUpdated(profile.getDoctor());
-        profileEntity.setCreateDate(new Date());
-        profileEntity.setModifiedDate(new Date());
-        profileEntity.setPatientId(profile.getPatientId());
-        profileEntity.setDiseasesHistory(profile.getDiseasesHistory().stream().map(DiseasesHistory::new).collect(Collectors.toList()));
-        profileEntity.setMedicalTestResult(TestResultUtil.testResult2Entity(profile.getMedicalTestResult()));
-        profileEntity.setPrescription(PrescriptionUtil.prescription2Entity(profile.getPrescription()));
+       return MedicalTreatmentProfileEntity.builder()
+                .doctor(profile.getDoctor())
+                .doctorUpdated(profile.getDoctor())
+                .createDate(new Date())
+                .modifiedDate(new Date())
+                .patientId(profile.getPatientId())
+                .diseasesHistory(profile.getDiseasesHistory().stream().map(name -> DiseasesHistory.builder().name(name).build()).collect(Collectors.toList()))
+                .medicalTestResult(TestResultUtil.testResult2Entity(profile.getMedicalTestResult()))
+                .prescription(PrescriptionUtil.prescription2Entity(profile.getPrescription())).build();
+    }
+
+    public static MedicalTreatmentProfileEntity updateProfile (MedicalTreatmentProfileEntity profileEntity,
+                                                               MedicalTreatmentProfile profile) {
+            profileEntity.setDoctorUpdated(profile.getDoctorUpdated());
+            profileEntity.setModifiedDate(new Date());
+            profileEntity.setDiseasesHistory(profile.getDiseasesHistory().stream().map(name ->
+                    DiseasesHistory.builder().name(name).build()).collect(Collectors.toList()));
         return profileEntity;
     }
 }

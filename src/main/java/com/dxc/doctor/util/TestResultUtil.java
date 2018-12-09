@@ -2,6 +2,7 @@ package com.dxc.doctor.util;
 
 import com.dxc.doctor.api.model.MedicalTestResult;
 import com.dxc.doctor.entity.MedicalTestResultEntity;
+import com.dxc.doctor.entity.MedicalTreatmentProfileEntity;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -14,17 +15,21 @@ public class TestResultUtil {
         testResult.setAllergicMedicines(Arrays.stream(entity.getAllergicMedicines().split(",")).collect(Collectors.toList()));
         testResult.setBloodType(entity.getBloodType());
         testResult.setUltraSound(entity.getUltraSound());
-        testResult.setXRay(entity.getxRay());
+        testResult.setXRay(entity.getXRay());
         return testResult;
     }
 
     public static MedicalTestResultEntity testResult2Entity(MedicalTestResult testResult) {
-        MedicalTestResultEntity entity = new MedicalTestResultEntity();
-        entity.setBloodType(testResult.getBloodType());
-        entity.setxRay(testResult.getXRay());
-        entity.setUltraSound(testResult.getUltraSound());
-        entity.setAllergicMedicines(testResult.getAllergicMedicines().stream()
-                .collect(Collectors.joining(",")));
-        return entity;
+       return MedicalTestResultEntity.builder()
+               .bloodType(testResult.getBloodType())
+               .allergicMedicines(testResult.getAllergicMedicines().stream().collect(Collectors.joining(",")))
+               .ultraSound(testResult.getUltraSound())
+               .xRay(testResult.getXRay()).build();
+    }
+
+    public static MedicalTestResultEntity updateMedicalResult(MedicalTestResult testResult) {
+        MedicalTestResultEntity medicalReult = testResult2Entity(testResult);
+        medicalReult.setId(testResult.getId().longValue());
+        return medicalReult;
     }
 }

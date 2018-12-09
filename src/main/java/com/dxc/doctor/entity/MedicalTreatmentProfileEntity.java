@@ -1,11 +1,19 @@
 package com.dxc.doctor.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "MedicalTreatmentProfile")
+@Getter
+@Setter
+@Builder
 public class MedicalTreatmentProfileEntity {
 
     @Id
@@ -40,75 +48,20 @@ public class MedicalTreatmentProfileEntity {
     @JoinColumn(name = "MEDICAL_TREATMENT_PROFILE_ID")
     private List<DiseasesHistory> diseasesHistory;
 
-    public List<DiseasesHistory> getDiseasesHistory() {
-        return diseasesHistory;
+    public MedicalTreatmentProfileEntity() {
     }
 
-    public void setDiseasesHistory(List<DiseasesHistory> diseasesHistory) {
-        this.diseasesHistory = diseasesHistory;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
+    public MedicalTreatmentProfileEntity(Long id, String patientId, String doctor, String doctorUpdated,
+                                         Date createDate, Date modifiedDate, MedicalTestResultEntity medicalTestResult,
+                                         PrescriptionEntity prescription, List<DiseasesHistory> diseasesHistory) {
         this.id = id;
-    }
-
-    public String getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(String patientId) {
         this.patientId = patientId;
-    }
-
-    public String getDoctor() {
-        return doctor;
-    }
-
-    public void setDoctor(String doctor) {
         this.doctor = doctor;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public Date getModifiedDate() {
-        return modifiedDate;
-    }
-
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
-
-    public MedicalTestResultEntity getMedicalTestResult() {
-        return medicalTestResult;
-    }
-
-    public void setMedicalTestResult(MedicalTestResultEntity medicalTestResult) {
-        this.medicalTestResult = medicalTestResult;
-    }
-
-    public PrescriptionEntity getPrescription() {
-        return prescription;
-    }
-
-    public void setPrescription(PrescriptionEntity prescription) {
-        this.prescription = prescription;
-    }
-
-    public String getDoctorUpdated() {
-        return doctorUpdated;
-    }
-
-    public void setDoctorUpdated(String doctorUpdated) {
         this.doctorUpdated = doctorUpdated;
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+        this.medicalTestResult = medicalTestResult;
+        this.prescription = prescription;
+        this.diseasesHistory = diseasesHistory;
     }
 }

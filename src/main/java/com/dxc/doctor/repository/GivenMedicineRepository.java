@@ -28,4 +28,5 @@ public interface GivenMedicineRepository extends JpaRepository<GivenMedicineEnti
 
     @Query("select g.prescription.id from GivenMedicineEntity g where g.name = :name and g.deleted = false")
     Set<Long> getPrescriptionIdsByName(@Param("name") String name);
+
 }

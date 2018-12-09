@@ -1,9 +1,16 @@
 package com.dxc.doctor.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "MedicalTestResult")
+@Getter
+@Setter
+@Builder
 public class MedicalTestResultEntity {
 
     @Id
@@ -23,54 +30,20 @@ public class MedicalTestResultEntity {
     @Column(name = "ALLERGIC_MEDICINES")
     private String allergicMedicines;
 
-    @OneToOne(optional=false, mappedBy = "medicalTestResult")
+    @OneToOne(optional = false, mappedBy = "medicalTestResult")
     private MedicalTreatmentProfileEntity medicalTreatmentProfileEntity;
 
-    public Long getId() {
-        return id;
+    public MedicalTestResultEntity() {
     }
 
-    public void setId(Long id) {
+    public MedicalTestResultEntity(Long id, String bloodType, String xRay, String ultraSound,
+                                   String allergicMedicines,
+                                   MedicalTreatmentProfileEntity medicalTreatmentProfileEntity) {
         this.id = id;
-    }
-
-    public String getBloodType() {
-        return bloodType;
-    }
-
-    public void setBloodType(String bloodType) {
         this.bloodType = bloodType;
-    }
-
-    public String getxRay() {
-        return xRay;
-    }
-
-    public void setxRay(String xRay) {
         this.xRay = xRay;
-    }
-
-    public String getUltraSound() {
-        return ultraSound;
-    }
-
-    public void setUltraSound(String ultraSound) {
         this.ultraSound = ultraSound;
-    }
-
-    public String getAllergicMedicines() {
-        return allergicMedicines;
-    }
-
-    public void setAllergicMedicines(String allergicMedicines) {
         this.allergicMedicines = allergicMedicines;
-    }
-
-    public MedicalTreatmentProfileEntity getMedicalTreatmentProfileEntity() {
-        return medicalTreatmentProfileEntity;
-    }
-
-    public void setMedicalTreatmentProfileEntity(MedicalTreatmentProfileEntity medicalTreatmentProfileEntity) {
         this.medicalTreatmentProfileEntity = medicalTreatmentProfileEntity;
     }
 }

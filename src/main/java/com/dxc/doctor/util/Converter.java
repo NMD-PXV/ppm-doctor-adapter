@@ -13,26 +13,17 @@ import java.util.stream.Collectors;
 public class Converter {
 
 
-    public static List<GivenMedicineEntity> convertMedicinesForUpdate(List<GivenMedicine> givenMedicines,
+    public static List<GivenMedicineEntity> convertMedicines2Entities(List<GivenMedicine> givenMedicines,
                                                                          String type) {
         List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
         givenMedicines.stream().forEach(givenMedicineMapper -> {
-            GivenMedicineEntity givenMedicineEntity = new GivenMedicineEntity();
-            givenMedicineEntity.setId(givenMedicineMapper.getId().longValue());
-            givenMedicineEntity.setName(givenMedicineMapper.getName());
-            givenMedicineEntity.setQuantity(givenMedicineMapper.getQuantity());
-            givenMedicineEntity.setType(type);
-            givenMedicineEntity.setDeleted(false);
-            givenMedicineEntityList.add(givenMedicineEntity);
+            givenMedicineEntityList.add(GivenMedicineEntity.builder()
+                    .id(givenMedicineMapper.getId().longValue())
+                    .deleted(false)
+                    .name(givenMedicineMapper.getName())
+                    .quantity(givenMedicineMapper.getQuantity())
+                    .type(type).build());
         });
         return givenMedicineEntityList;
-    }
-
-    public static MedicalTestResultEntity convertMedicalTestResultForUpdate(MedicalTestResultEntity medicalTestResultEntity, MedicalTreatmentProfile profile) {
-        medicalTestResultEntity.setBloodType(profile.getMedicalTestResult().getBloodType());
-        medicalTestResultEntity.setxRay(profile.getMedicalTestResult().getXRay());
-        medicalTestResultEntity.setUltraSound(profile.getMedicalTestResult().getUltraSound());
-        medicalTestResultEntity.setAllergicMedicines(profile.getMedicalTestResult().getAllergicMedicines().stream().collect(Collectors.joining(",")));
-        return medicalTestResultEntity;
     }
 }

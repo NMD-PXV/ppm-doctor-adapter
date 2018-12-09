@@ -31,7 +31,7 @@ public class PrescriptionUtil {
     }
 
     public static PrescriptionEntity prescription2Entity(Prescription prescription) {
-        PrescriptionEntity entity = new PrescriptionEntity();
+
         List<GivenMedicineEntity> medicines = new ArrayList<>();
         medicines.addAll(prescription.getBeingUsed().stream().
                 map(g -> GivenMedicineUtil.givenMedicineToEntity(g, Type.BEING_USED.toString())).
@@ -39,7 +39,7 @@ public class PrescriptionUtil {
         medicines.addAll(prescription.getRecentlyUsed().stream().
                 map(g -> GivenMedicineUtil.givenMedicineToEntity(g, Type.RECENTLY_USED.toString())).
                 collect(Collectors.toList()));
-        entity.setGivenMedicines(medicines);
-        return entity;
+       return PrescriptionEntity.builder()
+               .givenMedicines(medicines).build();
     }
 }
