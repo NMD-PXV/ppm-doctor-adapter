@@ -12,8 +12,4 @@ import java.util.List;
 @Repository
 public interface PrescriptionRepository extends JpaRepository<PrescriptionEntity, Long> {
     PrescriptionEntity findByIdEquals(Long prescriptionId);
-
-//    @Query("SELECT medicines FROM GivenMedicineEntity medicines WHERE prescription_id = :prescriptionId AND " +
-//            "deleted = false")
-//    List<GivenMedicineEntity> getMedicinesByPreId(@Param("prescriptionId") Long prescriptionId);
 }

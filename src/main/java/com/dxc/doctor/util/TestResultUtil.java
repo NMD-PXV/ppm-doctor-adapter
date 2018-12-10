@@ -27,4 +27,10 @@ public class TestResultUtil {
                 .collect(Collectors.joining(",")));
         return entity;
     }
+
+    public static MedicalTestResultEntity updateMedicalResult(MedicalTestResult testResult) {
+        MedicalTestResultEntity medicalReult = testResult2Entity(testResult);
+        medicalReult.setId(testResult.getId().longValue());
+        return medicalReult;
+    }
 }

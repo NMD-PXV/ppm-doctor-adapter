@@ -53,4 +53,7 @@ public class DiseasesHistory {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    public DiseasesHistory() {
+    }
 }

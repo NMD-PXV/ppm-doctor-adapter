@@ -43,5 +43,6 @@ public class PrescriptionEntity {
         this.givenMedicines = givenMedicines;
     }
 
-
+    public PrescriptionEntity() {
+    }
 }

@@ -65,4 +65,7 @@ public class GivenMedicineEntity {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
+    public GivenMedicineEntity() {
+    }
 }

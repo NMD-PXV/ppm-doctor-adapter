@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class Converter {
 
 
-    public static List<GivenMedicineEntity> convertMedicinesForUpdate(List<GivenMedicine> givenMedicines,
+    public static List<GivenMedicineEntity> convertMedicines2Entities(List<GivenMedicine> givenMedicines,
                                                                          String type) {
         List<GivenMedicineEntity> givenMedicineEntityList = new ArrayList<>();
         givenMedicines.stream().forEach(givenMedicineMapper -> {
@@ -26,13 +26,5 @@ public class Converter {
             givenMedicineEntityList.add(givenMedicineEntity);
         });
         return givenMedicineEntityList;
-    }
-
-    public static MedicalTestResultEntity convertMedicalTestResultForUpdate(MedicalTestResultEntity medicalTestResultEntity, MedicalTreatmentProfile profile) {
-        medicalTestResultEntity.setBloodType(profile.getMedicalTestResult().getBloodType());
-        medicalTestResultEntity.setxRay(profile.getMedicalTestResult().getXRay());
-        medicalTestResultEntity.setUltraSound(profile.getMedicalTestResult().getUltraSound());
-        medicalTestResultEntity.setAllergicMedicines(profile.getMedicalTestResult().getAllergicMedicines().stream().collect(Collectors.joining(",")));
-        return medicalTestResultEntity;
     }
 }

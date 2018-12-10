@@ -111,4 +111,7 @@ public class MedicalTreatmentProfileEntity {
     public void setDoctorUpdated(String doctorUpdated) {
         this.doctorUpdated = doctorUpdated;
     }
+
+    public MedicalTreatmentProfileEntity() {
+    }
 }

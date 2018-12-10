@@ -73,4 +73,7 @@ public class MedicalTestResultEntity {
     public void setMedicalTreatmentProfileEntity(MedicalTreatmentProfileEntity medicalTreatmentProfileEntity) {
         this.medicalTreatmentProfileEntity = medicalTreatmentProfileEntity;
     }
+
+    public MedicalTestResultEntity() {
+    }
 }
