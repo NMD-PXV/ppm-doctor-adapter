@@ -72,15 +72,17 @@ paths:
       tags:
       - "profiles"
       summary: "get patient profiles"
-      description: "get patient profiles by name, disease, medicine. If no query then return all patient profiles"
+      description: "get patient profiles by ids, disease, medicine. If no query then return all patient profiles"
       operationId: "searchPatients"
       produces:
       - "application/json"
       parameters:
       - in: "query"
-        name: "name"
-        type: "string"
-        description: "name of patient"
+        name: "ids"
+        type: "array"
+        items:
+          type: "string"
+        description: "ids of patient"
         required: false
       - in: "query"
         name: "disease"
