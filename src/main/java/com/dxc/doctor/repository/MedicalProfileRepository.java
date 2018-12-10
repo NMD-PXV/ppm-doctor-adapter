@@ -17,5 +17,12 @@ public interface MedicalProfileRepository extends JpaRepository<MedicalTreatment
     List<MedicalTreatmentProfileEntity> findMultiProfiles(@Param("ids") Set<Long> ids);
 
     MedicalTreatmentProfileEntity findByIdEquals(Long id);
+
+    @Query("select p.id from MedicalTreatmentProfileEntity p where p.patientId in :ids")
+    Set<Long> findProfileIdsByPatientId(@Param("ids") List<String> ids);
+
+    @Query("select p from MedicalTreatmentProfileEntity p where p.id in :ids")
+    List<MedicalTreatmentProfileEntity> findMultiProfilesById(@Param("ids") Set<Long> ids);
+
 }
 

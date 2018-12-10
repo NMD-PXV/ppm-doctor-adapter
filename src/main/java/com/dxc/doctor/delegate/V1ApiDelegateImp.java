@@ -15,9 +15,10 @@ public class V1ApiDelegateImp implements V1ApiDelegate {
     @Autowired
     private DoctorService doctorService;
 
+
     @Override
-    public ResponseEntity<List<MedicalTreatmentProfile>> searchPatients(String name, String disease, String medicine) {
-        return ResponseEntity.ok(doctorService.searchTreatmentProfiles(name, disease, medicine));
+    public ResponseEntity<List<MedicalTreatmentProfile>> searchPatients(List<String> ids, String disease, String medicine) {
+        return ResponseEntity.ok(doctorService.searchTreatmentProfiles(ids, disease, medicine));
     }
 
     @Override

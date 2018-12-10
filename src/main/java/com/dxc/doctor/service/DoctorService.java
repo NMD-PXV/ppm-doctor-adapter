@@ -117,37 +117,49 @@ public class DoctorService {
         return patientId;
     }
 
-    public List<MedicalTreatmentProfile> searchTreatmentProfiles(String name, String disease, String medicine) {
-        if (name == null && disease == null && medicine == null)
+    public List<MedicalTreatmentProfile> searchTreatmentProfiles(List<String> ids, String disease, String medicine) {
+        if (ids == null && disease == null && medicine == null)
             return medicalProfileRepository.findAll().
                     stream().
                     map(ProfileUtil::entity2Profile).
                     collect(Collectors.toList());
-        if (name != null)
-            return searchProfilesByPatientId(name);
+        Set<Long> retIds;
 
-        if (disease != null && medicine != null) {
-            Set<Long> idsFromDisease = diseasesHistoryRepository.getProfileIdsByDisease(disease);
-            Set<Long> idsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
-            idsFromMedicine.retainAll(idsFromDisease);
+        if (ids != null) {
+            retIds = medicalProfileRepository.findProfileIdsByPatientId(ids);
+            if (disease != null) {
+                Set<Long> idsFromDisease = diseasesHistoryRepository.getProfileIdsByDisease(disease);
+                if (medicine != null) {
+                    Set<Long> prescriptionIdsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+                    Set<Long> idsFromMedicine = prescriptionRepository.findProfileIds(prescriptionIdsFromMedicine);
+                    idsFromMedicine.retainAll(idsFromDisease);
+                    retIds.retainAll(idsFromMedicine);
+                } else
+                    retIds.retainAll(idsFromDisease);
 
-            if (idsFromMedicine.isEmpty())
-                throw new MedicalProfilesException(PROFILES_NOT_FOUND);
-            return medicalProfileRepository.findMultiProfiles(idsFromMedicine).
-                    stream().
-                    map(ProfileUtil::entity2Profile).
-                    collect(Collectors.toList());
+            } else if (medicine != null) {
+                Set<Long> prescriptionIdsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+                Set<Long> idsFromMedicine = prescriptionRepository.findProfileIds(prescriptionIdsFromMedicine);
+                retIds.retainAll(idsFromMedicine);
+            }
+        } else {
+            if (disease != null) {
+                Set<Long> idsFromDisease = diseasesHistoryRepository.getProfileIdsByDisease(disease);
+                if (medicine != null) {
+                    Set<Long> prescriptionIdsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+                    Set<Long> idsFromMedicine = prescriptionRepository.findProfileIds(prescriptionIdsFromMedicine);
+                    idsFromMedicine.retainAll(idsFromDisease);
+                    retIds = idsFromMedicine;
+                } else
+                    retIds = idsFromDisease;
+            } else {
+                Set<Long> prescriptionIdsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+                retIds = prescriptionRepository.findProfileIds(prescriptionIdsFromMedicine);
+            }
         }
-
-        Set<Long> ids = null;
-        if (disease != null)
-            ids = diseasesHistoryRepository.getProfileIdsByDisease(disease);
-        else if (medicine != null)
-            ids = givenMedicineRepository.getPrescriptionIdsByName(medicine);
-
-        if (ids.isEmpty())
+        if (retIds.isEmpty())
             throw new MedicalProfilesException(PROFILES_NOT_FOUND);
-        return medicalProfileRepository.findMultiProfiles(ids).
+        return medicalProfileRepository.findMultiProfilesById(retIds).
                 stream().
                 map(ProfileUtil::entity2Profile).
                 collect(Collectors.toList());
