@@ -101,7 +101,6 @@ public class DoctorService {
                         .findByIdEquals(profileExisted.getPrescription().getId());
                 profileExisted.setPrescription(prescriptionEntity);
 
-
                 //  Update MedicalTestResult
                 MedicalTestResultEntity medicalTestResultEntity = TestResultUtil.
                         updateMedicalResult(profileInput.getMedicalTestResult());
