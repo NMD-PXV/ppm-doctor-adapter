@@ -1,13 +1,11 @@
-package com.dxc.doctor.service;
-
+package com.dxc.doctor.delegate;
 
 import com.dxc.doctor.api.model.GivenMedicine;
 import com.dxc.doctor.api.model.MedicalTestResult;
 import com.dxc.doctor.api.model.MedicalTreatmentProfile;
 import com.dxc.doctor.api.model.Prescription;
-import com.dxc.doctor.delegate.V1ApiDelegateImp;
-import com.dxc.doctor.entity.*;
-import com.dxc.doctor.util.*;
+import com.dxc.doctor.repository.MedicalProfileRepository;
+import com.dxc.doctor.service.DoctorService;
 import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,19 +14,20 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.ResponseEntity;
 
-import javax.persistence.ManyToOne;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DoctorServiceTest {
+public class V1ApiDelegateImpTest {
 
     @InjectMocks
+    private V1ApiDelegateImp v1ApiDelegateImp;
+
+    @Mock
     private DoctorService doctorService;
 
     @Mock
@@ -44,34 +43,8 @@ public class DoctorServiceTest {
     private GivenMedicine givenMedicine;
 
     @Mock
-    private MedicalTreatmentProfileEntity medicalTreatmentProfileEntityl;
+    private MedicalProfileRepository medicalProfileRepository;
 
-    @Mock
-    private MedicalTestResultEntity medicalTestResultEntity;
-
-    @Mock
-    private GivenMedicineEntity givenMedicineEntity;
-
-    @Mock
-    private DiseasesHistory diseasesHistory;
-
-    @Mock
-    private PrescriptionEntity prescriptionEntity;
-
-    @Mock
-    private TestResultUtil testResultUtil;
-
-    @Mock
-    private ProfileUtil profileUtil;
-
-    @Mock
-    private PrescriptionUtil prescriptionUtil;
-
-    @Mock
-    private GivenMedicineUtil givenMedicineUtil;
-
-    @Mock
-    private Converter converter;
 
     private static final List<String> DISEASES_HISTORY = new ArrayList<>();
     private static final List<String> ALLERGIC_MEDICINES = new ArrayList<>();
@@ -119,12 +92,9 @@ public class DoctorServiceTest {
 
     @Test
     public void upsertProfiles() {
-
-//        doAnswer((String) invocation -> {
-//
-//        });
         when(doctorService.addProfiles(PATIENT_ID, INPUT_PROFILES)).thenReturn(CREATED_PROFILE_RESULTS);
-        Assert.assertEquals(doctorService.addProfiles(PATIENT_ID, INPUT_PROFILES), CREATED_PROFILE_RESULTS);
-
+        ResponseEntity result = v1ApiDelegateImp.upsertProfiles(PATIENT_ID, INPUT_PROFILES);
+        Assert.assertEquals(CREATED_PROFILE_RESULTS, result.getBody());
     }
+
 }
