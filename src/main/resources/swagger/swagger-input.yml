@@ -1,11 +1,11 @@
 swagger: "2.0"
 info:
-  description: "PPM Doctor Adapter"
+  description: "PPM Treatment Adapter"
   version: "1.0.0"
-  title: "PPM Doctor Adapter"
+  title: "PPM Treatment Adapter"
 tags:
 - name: "profiles"
-  description: "Everything about doctor adapter"
+  description: "Everything about Medical Treatment Profile"
 schemes:
 - "https"
 - "http"
@@ -15,7 +15,7 @@ paths:
       tags:
       - "profiles"
       summary: "upsert profiles to a patient"
-      description: "upsert profiles to a patient by patient_id"
+      description: "upsert profiles to a patient by patient id"
       operationId: "upsertProfiles"
       consumes:
       - "application/json"
