@@ -54,14 +54,14 @@ public class DoctorService {
         if (medicalProfileExistedList.isEmpty()) {
             addProfiles(patientId, profiles);
         } else
-            updateProfile(patientId, profiles, medicalProfileExistedList);
+            updateProfile(patientId, profiles);
         return patientId;
     }
 
     @Transactional
     public String addProfiles(String patientId, List<MedicalTreatmentProfile> profiles) {
-        for (MedicalTreatmentProfile profileMapper : profiles) {
-            MedicalTreatmentProfileEntity medicalProfileEntity = ProfileUtil.profile2entity(profileMapper);
+        for (MedicalTreatmentProfile profile : profiles) {
+            MedicalTreatmentProfileEntity medicalProfileEntity = ProfileUtil.profile2entity(profile);
             medicalProfileEntity.setPatientId(patientId);
             // save new profile to database
             medicalProfileRepository.saveAndFlush(medicalProfileEntity);
@@ -70,54 +70,50 @@ public class DoctorService {
     }
 
     @Transactional
-    public String updateProfile(String patientId, List<MedicalTreatmentProfile> profiles,
-                                List<MedicalTreatmentProfileEntity> medicalProfileExistedList) {
+    public void updateProfile(String patientId, List<MedicalTreatmentProfile> profiles) {
         /**
          * Run every profile then check that the input profile existed or not
          * if profile existed then update that profile
          * else add profile in to a list and after the loop end, create new profiles in list
          */
         List<MedicalTreatmentProfile> newProfiles = new ArrayList<>();
-        for (MedicalTreatmentProfile profileInput : profiles) {
-            MedicalTreatmentProfileEntity profileExisted = medicalProfileRepository
-                    .findByIdEquals(profileInput.getId().longValue());
-            if (profileExisted == null) {
-                newProfiles.add(profileInput);
+        for (MedicalTreatmentProfile inputProfile : profiles) {
+            MedicalTreatmentProfileEntity existedProfile = medicalProfileRepository
+                    .findByIdEquals(inputProfile.getId().longValue());
+            if (existedProfile == null) {
+                newProfiles.add(inputProfile);
             } else {
-                ProfileUtil.updateProfile(profileExisted, profileInput);
+                ProfileUtil.updateProfile(existedProfile, inputProfile);
 
                 // Update medicines
-                List<GivenMedicineEntity> medicinesUpdated = new ArrayList<>();
+
                 List<GivenMedicineEntity> mBeingUsedExisted = givenMedicineRepository.getMedicinesByType(
-                        profileExisted.getPrescription().getId(), Type.BEING_USED.toString());
+                        existedProfile.getPrescription().getId(), Type.BEING_USED.toString());
                 List<GivenMedicineEntity> mBeingMapped = Converter.convertMedicines2Entities(
-                        profileInput.getPrescription().getBeingUsed(), Type.BEING_USED.toString());
-                medicinesUpdated.addAll(GivenMedicineUtil.updateMedicine(mBeingUsedExisted, mBeingMapped, givenMedicineRepository));
+                        inputProfile.getPrescription().getBeingUsed(), Type.BEING_USED.toString());
+                List<GivenMedicineEntity> updatedMedicines = new ArrayList<>(GivenMedicineUtil.updateMedicine(mBeingUsedExisted, mBeingMapped, givenMedicineRepository));
                 List<GivenMedicineEntity> mRecentlyExisted = givenMedicineRepository.getMedicinesByType(
-                        profileExisted.getPrescription().getId(), Type.RECENTLY_USED.toString());
+                        existedProfile.getPrescription().getId(), Type.RECENTLY_USED.toString());
                 List<GivenMedicineEntity> mRecentlyMapped = Converter.convertMedicines2Entities(
-                        profileInput.getPrescription().getRecentlyUsed(), Type.RECENTLY_USED.toString());
-                medicinesUpdated.addAll(GivenMedicineUtil.updateMedicine(mRecentlyExisted, mRecentlyMapped, givenMedicineRepository));
+                        inputProfile.getPrescription().getRecentlyUsed(), Type.RECENTLY_USED.toString());
+                updatedMedicines.addAll(GivenMedicineUtil.updateMedicine(mRecentlyExisted, mRecentlyMapped, givenMedicineRepository));
 
                 //  Update Prescription
                 PrescriptionEntity prescriptionEntity = prescriptionRepository
-                        .findByIdEquals(profileExisted.getPrescription().getId());
-                profileExisted.setPrescription(prescriptionEntity);
+                        .findByIdEquals(existedProfile.getPrescription().getId());
+                existedProfile.setPrescription(prescriptionEntity);
 
                 //  Update MedicalTestResult
                 MedicalTestResultEntity medicalTestResultEntity = TestResultUtil.
-                        updateMedicalResult(profileInput.getMedicalTestResult());
-                profileExisted.setMedicalTestResult(medicalTestResultEntity);
+                        updateMedicalResult(inputProfile.getMedicalTestResult());
+                existedProfile.setMedicalTestResult(medicalTestResultEntity);
 
                 // save update to database
-                medicalProfileRepository.save(profileExisted);
+                medicalProfileRepository.save(existedProfile);
             }
-
         }
-        if (!newProfiles.isEmpty()) {
+        if (!newProfiles.isEmpty())
             addProfiles(patientId, newProfiles);
-        }
-        return patientId;
     }
 
     public List<MedicalTreatmentProfile> searchTreatmentProfiles(List<String> ids, String disease, String medicine) {
@@ -133,39 +129,39 @@ public class DoctorService {
             if (disease != null) {
                 Set<Long> idsFromDisease = diseasesHistoryRepository.getProfileIdsByDisease(disease);
                 if (medicine != null) {
-                    Set<Long> prescriptionIdsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
-                    Set<Long> idsFromMedicine = prescriptionRepository.findProfileIds(prescriptionIdsFromMedicine);
+                    Set<Long> prescriptionIds = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+                    Set<Long> idsFromMedicine = prescriptionRepository.findProfileIds(prescriptionIds);
                     idsFromMedicine.retainAll(idsFromDisease);
                     retIds.retainAll(idsFromMedicine);
                 } else
                     retIds.retainAll(idsFromDisease);
 
             } else if (medicine != null) {
-                Set<Long> prescriptionIdsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
-                Set<Long> idsFromMedicine = prescriptionRepository.findProfileIds(prescriptionIdsFromMedicine);
+                Set<Long> prescriptionIds = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+                Set<Long> idsFromMedicine = prescriptionRepository.findProfileIds(prescriptionIds);
                 retIds.retainAll(idsFromMedicine);
             }
         } else {
             if (disease != null) {
                 Set<Long> idsFromDisease = diseasesHistoryRepository.getProfileIdsByDisease(disease);
                 if (medicine != null) {
-                    Set<Long> prescriptionIdsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
-                    Set<Long> idsFromMedicine = prescriptionRepository.findProfileIds(prescriptionIdsFromMedicine);
+                    Set<Long> prescriptionIds = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+                    Set<Long> idsFromMedicine = prescriptionRepository.findProfileIds(prescriptionIds);
                     idsFromMedicine.retainAll(idsFromDisease);
                     retIds = idsFromMedicine;
                 } else
                     retIds = idsFromDisease;
             } else {
-                Set<Long> prescriptionIdsFromMedicine = givenMedicineRepository.getPrescriptionIdsByName(medicine);
-                retIds = prescriptionRepository.findProfileIds(prescriptionIdsFromMedicine);
+                Set<Long> prescriptionIds = givenMedicineRepository.getPrescriptionIdsByName(medicine);
+                retIds = prescriptionRepository.findProfileIds(prescriptionIds);
             }
         }
         if (retIds.isEmpty())
             throw new MedicalProfilesException(PROFILES_NOT_FOUND);
-        return medicalProfileRepository.findMultiProfilesById(retIds).
-                stream().
-                map(ProfileUtil::entity2Profile).
-                collect(Collectors.toList());
+        return medicalProfileRepository.findMultiProfilesById(retIds)
+                .stream()
+                .map(ProfileUtil::entity2Profile)
+                .collect(Collectors.toList());
     }
 
 

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GivenMedicineUtil {
-    protected static GivenMedicine entity2GivenMedicine(GivenMedicineEntity entity){
+    protected static GivenMedicine entity2GivenMedicine(GivenMedicineEntity entity) {
         GivenMedicine givenMedicine = new GivenMedicine();
         givenMedicine.setId(new BigDecimal(entity.getId()));
         givenMedicine.setName(entity.getName());
@@ -26,9 +26,9 @@ public class GivenMedicineUtil {
         return entities;
     }
 
-    public static List<GivenMedicineEntity> updateMedicine(
-            List<GivenMedicineEntity> medicinesExisted, List<GivenMedicineEntity> medicinesMapped
-            , GivenMedicineRepository givenMedicineRepository) {
+    public static List<GivenMedicineEntity> updateMedicine(List<GivenMedicineEntity> medicinesExisted,
+                                                           List<GivenMedicineEntity> medicinesMapped,
+                                                           GivenMedicineRepository givenMedicineRepository) {
         List<GivenMedicineEntity> newMedicines = new ArrayList<>();
         if (medicinesExisted.size() <= medicinesMapped.size()) {
             for (GivenMedicineEntity medicineMapper : medicinesMapped) {
@@ -71,7 +71,7 @@ public class GivenMedicineUtil {
                 }
             }
         }
-        if (newMedicines != null)
+        if (!newMedicines.isEmpty())
             medicinesExisted.addAll(newMedicines);
         return medicinesExisted;
     }
