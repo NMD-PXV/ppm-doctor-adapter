@@ -29,8 +29,8 @@ public class TestResultUtil {
     }
 
     public static MedicalTestResultEntity updateMedicalResult(MedicalTestResult testResult) {
-        MedicalTestResultEntity medicalReult = testResult2Entity(testResult);
-        medicalReult.setId(testResult.getId().longValue());
-        return medicalReult;
+        MedicalTestResultEntity result = testResult2Entity(testResult);
+        result.setId(testResult.getId().longValue());
+        return result;
     }
 }

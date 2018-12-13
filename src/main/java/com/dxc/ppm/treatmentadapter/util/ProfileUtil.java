@@ -32,7 +32,10 @@ public class ProfileUtil {
         profileEntity.setCreateDate(new Date());
         profileEntity.setModifiedDate(new Date());
         profileEntity.setPatientId(profile.getPatientId());
-        profileEntity.setDiseasesHistory(profile.getDiseasesHistory().stream().map(DiseasesHistory::new).collect(Collectors.toList()));
+        profileEntity.setDiseasesHistory(profile.getDiseasesHistory()
+                .stream()
+                .map(DiseasesHistory::new)
+                .collect(Collectors.toList()));
         profileEntity.setMedicalTestResult(TestResultUtil.testResult2Entity(profile.getMedicalTestResult()));
         profileEntity.setPrescription(PrescriptionUtil.prescription2Entity(profile.getPrescription()));
         return profileEntity;
@@ -42,7 +45,9 @@ public class ProfileUtil {
                                                                MedicalTreatmentProfile profile) {
         profileEntity.setDoctorUpdated(profile.getDoctorUpdated());
         profileEntity.setModifiedDate(new Date());
-        profileEntity.setDiseasesHistory(profile.getDiseasesHistory().stream().map(DiseasesHistory::new)
+        profileEntity.setDiseasesHistory(profile.getDiseasesHistory()
+                .stream()
+                .map(DiseasesHistory::new)
                 .collect(Collectors.toList()));
         return profileEntity;
     }

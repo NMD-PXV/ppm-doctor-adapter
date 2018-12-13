@@ -117,14 +117,14 @@ public class DoctorService {
     }
 
     public List<MedicalTreatmentProfile> searchTreatmentProfiles(List<String> ids, String disease, String medicine) {
-        if (ids == null && disease == null && medicine == null)
+        if (ids.isEmpty() && disease == null && medicine == null)
             return medicalProfileRepository.findAll().
                     stream().
                     map(ProfileUtil::entity2Profile).
                     collect(Collectors.toList());
         Set<Long> retIds;
 
-        if (ids != null) {
+        if (!ids.isEmpty()) {
             retIds = medicalProfileRepository.findProfileIdsByPatientId(ids);
             if (disease != null) {
                 Set<Long> idsFromDisease = diseasesHistoryRepository.getProfileIdsByDisease(disease);
